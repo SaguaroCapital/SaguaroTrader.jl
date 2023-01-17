@@ -9,7 +9,7 @@ function _load_csv_into_df(
     market_open::Dates.CompoundPeriod = Hour(14) + Minute(30),
     market_close::Dates.CompoundPeriod = Hour(21) + Minute(59),
     start_dt::DateTime = DateTime(1900),
-    end_dt::DateTime = DateTime(2100),
+    end_dt::DateTime = DateTime(2100);
     time_col::Symbol = :timestamp,
     open_col::Symbol = :Open,
     close_col::Symbol = :Close,
@@ -34,7 +34,7 @@ function _load_csvs_into_dfs(
     market_open::Dates.CompoundPeriod = Hour(14) + Minute(30),
     market_close::Dates.CompoundPeriod = Hour(21) + Minute(59),
     start_dt = DateTime(1900),
-    end_dt = DateTime(2100),
+    end_dt = DateTime(2100);
     time_col::Symbol = :timestamp,
     open_col::Symbol = :Open,
     close_col::Symbol = :Close,
@@ -47,7 +47,7 @@ function _load_csvs_into_dfs(
             market_open,
             market_close,
             start_dt,
-            end_dt,
+            end_dt;
             time_col,
             open_col,
             close_col,
@@ -221,6 +221,9 @@ struct CSVDailyBarSource <: DataSource
         market_close::Dates.CompoundPeriod = Hour(20) + Minute(59),
         start_dt::DateTime = DateTime(1900), #TODO: multiple dispatch 
         end_dt::DateTime = DateTime(2100),
+        time_col::Symbol = :timestamp,
+        open_col::Symbol = :Open,
+        close_col::Symbol = :Close,
     )
         @assert start_dt < end_dt "Start Date $start_dt must be before $end_dt"
         csv_files = [joinpath(csv_dir, i) for i in readdir(csv_dir) if occursin(".csv", i)]
@@ -236,7 +239,10 @@ struct CSVDailyBarSource <: DataSource
             market_open,
             market_close,
             start_dt,
-            end_dt,
+            end_dt;
+            time_col,
+            open_col,
+            close_col
         )
         assets = [asset_type(Symbol(asset)) for asset in csv_symbols]
         return new(
