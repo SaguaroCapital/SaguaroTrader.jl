@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Examples · SaguaroTrader.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link rel="canonical" href="https://SaguaroCapital.github.io/SaguaroTrader.jl/examples/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">SaguaroTrader.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../api/">API</a></li><li class="is-active"><a class="tocitem" href>Examples</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#%-Equities,-40%-Bonds"><span>60% Equities, 40% Bonds</span></a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Examples</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Examples</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SaguaroCapital/SaguaroTrader.jl.git" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Examples"><a class="docs-heading-anchor" href="#Examples">Examples</a><a id="Examples-1"></a><a class="docs-heading-anchor-permalink" href="#Examples" title="Permalink"></a></h1><h1 id="%-Equities,-40%-Bonds"><a class="docs-heading-anchor" href="#%-Equities,-40%-Bonds">60% Equities, 40% Bonds</a><a id="%-Equities,-40%-Bonds-1"></a><a class="docs-heading-anchor-permalink" href="#%-Equities,-40%-Bonds" title="Permalink"></a></h1><pre><code class="language-julia hljs"># https://github.com/mhallsmoore/qstrader/blob/master/examples/sixty_forty.py
+using SaguaroTrader
+using SaguaroTraderResults
+using CSV
+using DataFrames
+using MarketData
+using Plots
+
+start_dt = DateTime(2005, 1, 1)
+end_dt = DateTime(2022, 9, 1)
+initial_cash = 100_000.0
+
+#####################################################
+# Download market data
+######################################################
+function download_market_data(
+    securities::Vector{Symbol},
+    data_dir::String = &quot;./temp/&quot;;
+    start_dt::DateTime = DateTime(1990, 1, 1),
+    end_dt::DateTime = DateTime(2040, 1, 1),
+)
+    if !isdir(data_dir)
+        mkdir(data_dir)
+    end
+    for security in securities
+        df = yahoo(security, YahooOpt(period1 = start_dt, period2 = end_dt)) |&gt; DataFrame
+        CSV.write(joinpath(data_dir, &quot;$security.csv&quot;), df)
+    end
+    return nothing
+end
+
+
+if !isfile(&quot;./temp/AGG.csv&quot;) &amp; !isfile(&quot;./temp/SPY.csv&quot;)
+    download_market_data([:SPY, :AGG]; start_dt = start_dt)
+end
+
+#####################################################
+# Prepare broker
+######################################################
+# configure data source, portfolio optimizer
+data_source = CSVDailyBarSource(&quot;./temp/&quot;)
+data_handler = BacktestDataHandler([data_source])
+port_optimizer = FixedWeightPortfolioOptimizer(data_handler)
+
+# create exchange, broker
+exchange = SimulatedExchange(start_dt)
+broker = SimulatedBroker(start_dt, exchange, data_handler; initial_cash = initial_cash * 2)
+
+#####################################################
+# 60% SPY, 40% AAG (bonds)
+######################################################
+
+# construct asset universe, weights
+assets = [Equity(:SPY), Equity(:AGG)]
+universe = StaticUniverse(assets)
+signal_weights = Dict(Equity(:SPY) =&gt; 0.6, Equity(:AGG) =&gt; 0.4)
+alpha_model = FixedSignalsAlphaModel(signal_weights)
+
+# Configure portfolio
+create_portfolio!(broker, initial_cash; portfolio_id = &quot;sixty_forty&quot;)
+order_sizer = DollarWeightedOrderSizer(0.001)
+rebalance = BuyAndHoldRebalance(Date(start_dt))
+
+# Run 60/40 backtest
+strategy_trading_session = BacktestTradingSession(
+    start_dt,
+    end_dt,
+    universe,
+    broker,
+    alpha_model,
+    rebalance,
+    portfolio_id,
+    order_sizer,
+    port_optimizer,
+)
+run!(strategy_trading_session)
+
+#####################################################
+# SPY Benchmark
+######################################################
+# Configure portfolio
+create_portfolio!(broker, initial_cash; portfolio_id = &quot;spy_benchmark&quot;)
+
+# configure weights, order sizer, rebalance frequency
+signal_weights = Dict(Equity(:SPY) =&gt; 1.0)
+alpha_model = FixedSignalsAlphaModel(signal_weights)
+order_sizer = DollarWeightedOrderSizer(0.001)
+rebalance = BuyAndHoldRebalance(Date(start_dt))
+
+# Run SPY backtest
+benchmark_trading_session = BacktestTradingSession(
+    start_dt,
+    end_dt,
+    universe,
+    broker,
+    alpha_model,
+    rebalance,
+    portfolio_id,
+    order_sizer,
+    port_optimizer,
+)
+run!(benchmark_trading_session)
+
+
+#####################################################
+# Plot results
+######################################################
+plt_tearsheet = SaguaroTraderResults.plot_tearsheet(
+    strategy_trading_session,
+    benchmark_trading_session;
+    title = &quot;60/40 Backtest Results vs S&amp;P 500&quot;,
+)
+savefig(plt_tearsheet, &quot;./tearsheet.png&quot;)</code></pre><p><img src="../assets/sixty-fourty.png" alt="60/40 Tearsheet"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../api/">« API</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Tuesday 17 January 2023 16:57">Tuesday 17 January 2023</span>. Using Julia version 1.8.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
