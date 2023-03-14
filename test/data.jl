@@ -22,7 +22,7 @@
     @test ask == 27.24
 
     unique_events = SaguaroTrader._get_unique_pricing_events(ds)
-    @test size(unique_events, 1) == 21398
+    @test size(unique_events, 1) == 9382
     @test size(unique_events) == size(unique(unique_events))
 end
 
@@ -49,6 +49,6 @@ end
     @test names(df_prices) == ["timestamp", "AMD", "NVDA"]
 
     unique_events = SaguaroTrader._get_unique_pricing_events(dh)
-    @test size(unique_events, 1) == 21398
+    @test size(unique_events, 1) == 9382
     @test size(unique_events) == size(unique(unique_events))
 end
