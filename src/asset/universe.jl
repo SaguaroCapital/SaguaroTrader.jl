@@ -26,7 +26,6 @@ struct DynamicUniverse <: Universe
     asset_dates::Dict{Asset,DateTime}
 end
 
-
 function _get_assets(uni::StaticUniverse)
     return uni.assets
 end

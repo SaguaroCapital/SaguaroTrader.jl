@@ -4,7 +4,7 @@ Store all open positions
 """
 struct PositionHandler
     positions::Dict{Symbol,Position}
-    function PositionHandler(positions::Dict{Symbol,Position} = Dict{Symbol,Position}())
+    function PositionHandler(positions::Dict{Symbol,Position}=Dict{Symbol,Position}())
         return new(positions)
     end
 end
@@ -60,7 +60,6 @@ function total_market_value(pos_handler::PositionHandler)
     return market_value
 end
 
-
 """
 ```julia
 total_unrealized_pnl(pos_handler::PositionHandler)
@@ -108,7 +107,6 @@ function total_realized_pnl(pos_handler::PositionHandler)
     end
     return rpnl
 end
-
 
 """
 ```julia

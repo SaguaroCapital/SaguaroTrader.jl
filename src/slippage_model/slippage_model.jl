@@ -21,7 +21,6 @@ struct FixedSlippageModel <: SlippageModel
     spread::Float64
 end
 
-
 function (slippage_model::FixedSlippageModel)(order::Order, price::Float64)
     return price + (slippage_model.spread / 2.0) * order.direction
 end
@@ -44,15 +43,10 @@ function (slippage_model::PercentSlippageModel)(order::Order, price::Float64)
     return price + ((slippage_model.slippage_pct / 100) * price / 2.0) * order.direction
 end
 
-
 #TODO: Implement
 # Need to carry volume information through to the model
 """
 
 """
 struct VolumeSharesSlippageModel <: SlippageModel
-
-
 end
-
-

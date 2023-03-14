@@ -3,5 +3,4 @@
 
 """
 struct RiskModel
-
 end

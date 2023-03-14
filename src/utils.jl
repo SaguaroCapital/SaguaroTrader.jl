@@ -3,5 +3,5 @@
 Generate a unique UUID
 """
 function generate_id()
-    return UUIDs.uuid1() |> string
+    return string(UUIDs.uuid1())
 end

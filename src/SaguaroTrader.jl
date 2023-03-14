@@ -7,7 +7,6 @@ using DataStructures
 using Random
 using UUIDs
 
-
 include("utils.jl")
 include("asset/asset.jl")
 include("order/order.jl")
@@ -27,7 +26,6 @@ include("order_sizer/order_sizer.jl")
 include("execution/execution.jl")
 include("portfolio_construction_model/portfolio_construction_model.jl")
 include("backtest_trading_session/backtest_trading_session.jl")
-
 
 export
 
@@ -125,6 +123,5 @@ export
     # Trading
     BacktestTradingSession,
     run!
-
 
 end

@@ -19,8 +19,7 @@ struct FixedWeightPortfolioOptimizer <: PortfolioOptimizer
 end
 
 function generate_weights(
-    opt::FixedWeightPortfolioOptimizer,
-    initial_weights::Dict{Symbol,Float64},
+    opt::FixedWeightPortfolioOptimizer, initial_weights::Dict{Symbol,Float64}
 )
     return initial_weights
 end
@@ -36,14 +35,13 @@ Fields
 struct EqualWeightPortfolioOptimizer <: PortfolioOptimizer
     data_handler::DataHandler
     scale::Float64
-    function EqualWeightPortfolioOptimizer(data_handler::DataHandler, scale::Float64 = 1.0)
+    function EqualWeightPortfolioOptimizer(data_handler::DataHandler, scale::Float64=1.0)
         return new(data_handler, scale)
     end
 end
 
 function generate_weights(
-    opt::EqualWeightPortfolioOptimizer,
-    initial_weights::Dict{Symbol,Float64},
+    opt::EqualWeightPortfolioOptimizer, initial_weights::Dict{Symbol,Float64}
 )
     assets = keys(initial_weights)
     n_assets = length(assets)
@@ -55,7 +53,6 @@ function generate_weights(
     end
     return new_weights
 end
-
 
 """
 ```julia

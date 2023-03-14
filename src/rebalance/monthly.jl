@@ -17,8 +17,8 @@ struct MonthlyRebalance <: Rebalance
     function MonthlyRebalance(
         start_date::Date,
         end_date::Date,
-        day_of_month::Int = 1,
-        market_time::Union{Hour,Minute,Dates.CompoundPeriod} = Hour(14) + Minute(30),
+        day_of_month::Int=1,
+        market_time::Union{Hour,Minute,Dates.CompoundPeriod}=Hour(14) + Minute(30),
     )
         # adjust start month based on day of month
         if (Day(start_date) <= Day(day_of_month)) & (day_of_month >= 1)

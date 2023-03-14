@@ -3,14 +3,11 @@
     ds = CSVDailyBarSource("./test_data")
     dh = BacktestDataHandler([ds])
     broker = SimulatedBroker(
-        DateTime(2020),
-        SimulatedExchange(DateTime(2020)),
-        dh;
-        initial_cash = 100_000.0,
+        DateTime(2020), SimulatedExchange(DateTime(2020)), dh; initial_cash=100_000.0
     )
-    create_portfolio!(broker, 75_000; portfolio_id = "test_port")
+    create_portfolio!(broker, 75_000; portfolio_id="test_port")
     @test broker.cash_balances[broker.base_currency] == 25_000.0
-    create_portfolio!(broker; portfolio_id = "test_port2")
+    create_portfolio!(broker; portfolio_id="test_port2")
     @test broker.cash_balances[broker.base_currency] == 0.0
 
     order = Order(DateTime(2020, 1, 5), 100, Equity(:AMD))
@@ -29,5 +26,4 @@
     @test broker.portfolios["test_port"].cash == 75198.0
     withdraw_funds_from_portfolio!(broker, "test_port", 5_000)
     @test broker.portfolios["test_port"].cash == 70198.0
-
 end

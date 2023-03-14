@@ -32,7 +32,6 @@ end
     @test isapprox(SaguaroTrader.unrealized_pnl(pos), 49.95)
     @test isapprox(SaguaroTrader.total_pnl(pos), 99.80)
 
-
     txn = Transaction(Equity(:AMD), -10.0, DateTime(2021, 1, 1), 50.0, 0.1)
     pos = position_from_transaction(txn)
     @test SaguaroTrader.direction(pos) == -1
@@ -40,7 +39,6 @@ end
     txn = Transaction(Equity(:AMD), 5.0, DateTime(2021, 2, 1), 60.0, 0.1)
     SaguaroTrader.transact!(pos, txn)
     @test pos.net_quantity == -5.0
-
 end
 
 @testset "PositionHandler" begin

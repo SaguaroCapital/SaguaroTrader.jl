@@ -19,5 +19,4 @@
     order = Order(DateTime(2022, 7, 1), 100.0, Equity(:AMD))
     slippage_model = PercentSlippageModel(0.2)
     @test slippage_model(order, 10.0) == 10.01
-
 end

@@ -17,8 +17,8 @@ struct WeeklyRebalance <: Rebalance
     function WeeklyRebalance(
         start_date::Date,
         end_date::Date,
-        day_of_week::Int = 1, # monday
-        market_time::Union{Hour,Minute,Dates.CompoundPeriod} = Hour(14) + Minute(30),
+        day_of_week::Int=1, # monday
+        market_time::Union{Hour,Minute,Dates.CompoundPeriod}=Hour(14) + Minute(30),
     )
         # adjust start day based on day of week
         start_day_of_week = dayofweek(start_date)

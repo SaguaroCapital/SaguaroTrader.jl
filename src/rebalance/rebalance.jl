@@ -9,7 +9,6 @@ include("daily.jl")
 include("weekly.jl")
 include("monthly.jl")
 
-
 function _is_rebalance_event(rebalance::Rebalance, dt::DateTime)
     return dt in rebalance.rebalances
 end

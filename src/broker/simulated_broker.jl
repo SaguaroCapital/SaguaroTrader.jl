@@ -35,12 +35,11 @@ mutable struct SimulatedBroker <: Broker
         start_dt::DateTime,
         exchange::Exchange,
         data_handler::DataHandler;
-        account_id::String = "",
-        base_currency::String = "USD",
-        initial_cash::Float64 = 0.0,
-        fee_model = ZeroFeeModel(),
+        account_id::String="",
+        base_currency::String="USD",
+        initial_cash::Float64=0.0,
+        fee_model=ZeroFeeModel(),
     )
-
         @assert initial_cash >= 0.0 "initial cash must be >= 0"
 
         cash_balances = Dict{String,Float64}(base_currency => initial_cash)
@@ -65,12 +64,12 @@ end
 
 function subscribe_funds!(broker::Broker, amount::Real)
     @assert amount >= 0 "Can not credit negative amount: $amount"
-    broker.cash_balances[broker.base_currency] += amount
+    return broker.cash_balances[broker.base_currency] += amount
 end
 
 function subscribe_funds!(broker::Broker, amount::Real, currency::String)
     @assert amount >= 0 "Can not credit negative amount: $amount"
-    broker.cash_balances[currency] += amount
+    return broker.cash_balances[currency] += amount
 end
 
 function withdraw_funds!(broker::Broker, amount::Real)
@@ -78,7 +77,7 @@ function withdraw_funds!(broker::Broker, amount::Real)
     error_msg = "Can not withdraw $amount, because it is more than the cash balance of $(broker.cash_balances[broker.base_currency])"
     @assert amount <= broker.cash_balances[broker.base_currency] error_msg
 
-    broker.cash_balances[broker.base_currency] -= amount
+    return broker.cash_balances[broker.base_currency] -= amount
 end
 
 function withdraw_funds!(broker::Broker, amount::Real, currency::String)
@@ -87,7 +86,7 @@ function withdraw_funds!(broker::Broker, amount::Real, currency::String)
     error_msg = "Can not withdraw $amount, because it is more than the cash balance of $(broker.cash_balances[currency])"
     @assert amount <= broker.cash_balances[currency] error_msg
 
-    broker.cash_balances[currency] -= amount
+    return broker.cash_balances[currency] -= amount
 end
 
 function get_total_market_value(broker::Broker)
@@ -97,7 +96,6 @@ function get_total_market_value(broker::Broker)
     end
     return tmv
 end
-
 
 function get_account_total_equity(broker::Broker)
     te = 0.0
@@ -110,8 +108,8 @@ end
 function create_portfolio!(
     broker::Broker,
     initial_cash::Real;
-    name::String = "",
-    portfolio_id::String = string(UUIDs.uuid1()),
+    name::String="",
+    portfolio_id::String=string(UUIDs.uuid1()),
 )
     error_msg = "Not enough cash in the broker $(broker.cash_balances[broker.base_currency])"
     @assert initial_cash <= broker.cash_balances[broker.base_currency] error_msg
@@ -120,8 +118,8 @@ function create_portfolio!(
         broker.current_dt,
         float(initial_cash),
         broker.base_currency;
-        portfolio_id = portfolio_id,
-        name = name,
+        portfolio_id=portfolio_id,
+        name=name,
     )
     broker.portfolios[portfolio_id] = p
     broker.open_orders[portfolio_id] = Queue{Order}()
@@ -131,16 +129,14 @@ function create_portfolio!(
 end
 
 function create_portfolio!(
-    broker::Broker;
-    name::String = "",
-    portfolio_id::String = string(UUIDs.uuid1()),
+    broker::Broker; name::String="", portfolio_id::String=string(UUIDs.uuid1())
 )
     p = Portfolio(
         broker.current_dt,
         broker.cash_balances[broker.base_currency],
         broker.base_currency;
-        portfolio_id = portfolio_id,
-        name = name,
+        portfolio_id=portfolio_id,
+        name=name,
     )
     broker.portfolios[portfolio_id] = p
     broker.open_orders[portfolio_id] = Queue{Order}()
@@ -188,8 +184,7 @@ function _execute_order(broker::Broker, dt::DateTime, portfolio_id::String, orde
         price = bid_ask[1]
     end
 
-
-    consideration = round(price * order.quantity; digits = 2)
+    consideration = round(price * order.quantity; digits=2)
     fee = calculate_fee(broker.fee_model, order.quantity, price)
     est_total_cost = consideration + fee
     total_cash = broker.portfolios[portfolio_id].cash
@@ -200,7 +195,7 @@ function _execute_order(broker::Broker, dt::DateTime, portfolio_id::String, orde
     if est_total_cost > total_cash
         while (est_total_cost > total_cash) & (quantity > 0)
             quantity -= 1
-            consideration = round(price * quantity; digits = 2)
+            consideration = round(price * quantity; digits=2)
             fee = calculate_fee(broker.fee_model, quantity, price)
             est_total_cost = consideration + fee
             total_cash = broker.portfolios[portfolio_id].cash
@@ -217,8 +212,7 @@ function _execute_order(broker::Broker, dt::DateTime, portfolio_id::String, orde
     end
 
     txn = Transaction(order.asset, quantity, broker.current_dt, price, fee, order.order_id)
-    transact_asset!(broker.portfolios[portfolio_id], txn)
-
+    return transact_asset!(broker.portfolios[portfolio_id], txn)
 end
 
 """
@@ -226,9 +220,8 @@ Add an order to the broker order queue
 """
 function submit_order!(broker::Broker, portfolio_id::String, order::Order)
     @assert any(portfolio_id .== keys(broker.portfolios)) "The porfolio ID $portfolio_id does not exist"
-    enqueue!(broker.open_orders[portfolio_id], order)
+    return enqueue!(broker.open_orders[portfolio_id], order)
 end
-
 
 """
 ```julia
@@ -257,8 +250,7 @@ function update_prices!(broker::Broker, dt::DateTime)
                 error("Zero Price for $asset at $dt")
             end
             update_current_price!(
-                broker.portfolios[portfolio_id].pos_handler.positions[asset],
-                mid_price,
+                broker.portfolios[portfolio_id].pos_handler.positions[asset], mid_price
             )
         end
     end
@@ -277,8 +269,6 @@ function execute_orders!(broker::Broker, dt::DateTime)
     end
     return nothing
 end
-
-
 
 """
 ```julia
@@ -309,7 +299,6 @@ Parameters
 - `portfolio_id::String = string(UUIDs.uuid1())`
 """
 create_portfolio!
-
 
 """
 ```julia

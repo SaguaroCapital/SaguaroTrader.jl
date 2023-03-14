@@ -35,5 +35,4 @@
     @test size(rebalance.rebalances, 1) == 2
     rebalance = MonthlyRebalance(Date(2022, 1, 15), Date(2022, 3, 15), 1)
     @test size(rebalance.rebalances, 1) == 2
-
 end

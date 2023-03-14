@@ -5,12 +5,10 @@
 @testset "CSVDailyBarSource" begin
     # CSVDailyBarSource
     ds = CSVDailyBarSource(
-        "./test_data/";
-        start_dt = DateTime(2019),
-        end_dt = DateTime(2019, 2),
+        "./test_data/"; start_dt=DateTime(2019), end_dt=DateTime(2019, 2)
     )
     @test ds.csv_symbols == [:AAPL, :AMD, :INTC, :NVDA, :SPY]
-    ds = CSVDailyBarSource("./test_data/"; csv_symbols = [:AMD, :NVDA])
+    ds = CSVDailyBarSource("./test_data/"; csv_symbols=[:AMD, :NVDA])
     @test ds.csv_symbols == [:AMD, :NVDA]
 
     # bid = get_bid(ds, DateTime(2019, 4, 9, 14, 29), :AMD)
@@ -32,8 +30,8 @@ end
 # DataHandler
 ########################################################################
 @testset "DataHandler" begin
-    ds1 = CSVDailyBarSource("./test_data"; csv_symbols = [:AMD, :NVDA])
-    ds2 = CSVDailyBarSource("./test_data"; csv_symbols = [:SPY])
+    ds1 = CSVDailyBarSource("./test_data"; csv_symbols=[:AMD, :NVDA])
+    ds2 = CSVDailyBarSource("./test_data"; csv_symbols=[:SPY])
     dh = BacktestDataHandler([ds1, ds2])
 
     # bid, ask = get_asset_latest_bid_ask_price(dh, DateTime(2019, 4, 9, 14, 29), :AMD)
@@ -46,10 +44,7 @@ end
     @test mid == 28.24
 
     df_prices = get_assets_historical_range_close_price(
-        dh,
-        DateTime(2019),
-        DateTime(2020),
-        [:AMD, :NVDA],
+        dh, DateTime(2019), DateTime(2020), [:AMD, :NVDA]
     )
     @test names(df_prices) == ["timestamp", "AMD", "NVDA"]
 

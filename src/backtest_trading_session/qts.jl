@@ -16,10 +16,10 @@ struct QuantTradingSystem
         broker::Broker,
         portfolio_id::String,
         alpha_model::AlphaModel;
-        long_only::Bool = false,
-        cash_buffer_percentage::Float64 = 0.05,
-        gross_leverage::Float64 = 1.0,
-        submit_orders::Bool = false,
+        long_only::Bool=false,
+        cash_buffer_percentage::Float64=0.05,
+        gross_leverage::Float64=1.0,
+        submit_orders::Bool=false,
     )
         if long_only
             order_sizer = DollarWeightedOrderSizer(cash_buffer_percentage)

@@ -45,8 +45,9 @@ function _create_rebalance_orders(
     rebalance_orders_dict = Dict{Asset,Order}()
     for (_, position) in current_positions
         if !(position.asset in target_positions_assets)
-            rebalance_orders_dict[position.asset] =
-                Order(dt, -position.net_quantity, position.asset)
+            rebalance_orders_dict[position.asset] = Order(
+                dt, -position.net_quantity, position.asset
+            )
         end
     end
 
@@ -57,8 +58,9 @@ function _create_rebalance_orders(
             if current_quantity == target_quantity
                 continue
             else
-                rebalance_orders_dict[asset] =
-                    Order(dt, target_quantity - current_quantity, asset)
+                rebalance_orders_dict[asset] = Order(
+                    dt, target_quantity - current_quantity, asset
+                )
             end
         else # new position
             rebalance_orders_dict[asset] = Order(dt, target_quantity, asset)
@@ -68,8 +70,6 @@ function _create_rebalance_orders(
     sell_orders = Vector{Order}([i[2] for i in rebalance_orders_dict if i[2].direction < 0])
     return Vector{Order}([sell_orders..., buy_orders...])
 end
-
-
 
 """
 ```julia
