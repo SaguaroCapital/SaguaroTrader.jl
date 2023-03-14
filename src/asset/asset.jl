@@ -15,11 +15,10 @@ Fields
 """
 struct Cash <: Asset
     currency::String
-    function Cash(currency::String = "USD")
+    function Cash(currency::String="USD")
         return new(currency)
     end
 end
-
 
 """
 Equity asset type.
@@ -34,10 +33,10 @@ struct Equity <: Asset
     symbol::Symbol
     name::String
     tax_exempt::Bool
-    function Equity(symbol::Symbol, name::String, tax_exempt::Bool = false)
+    function Equity(symbol::Symbol, name::String, tax_exempt::Bool=false)
         return new(symbol, name, tax_exempt)
     end
-    function Equity(symbol::Symbol, tax_exempt::Bool = false)
+    function Equity(symbol::Symbol, tax_exempt::Bool=false)
         return new(symbol, "$symbol", tax_exempt)
     end
 end

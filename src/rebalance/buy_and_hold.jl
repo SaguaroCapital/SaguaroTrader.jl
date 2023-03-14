@@ -16,7 +16,7 @@ struct BuyAndHoldRebalance <: Rebalance
     end
     function BuyAndHoldRebalance(
         start_date::Date,
-        market_time::Union{Hour,Minute,Dates.CompoundPeriod} = Hour(14) + Minute(30),
+        market_time::Union{Hour,Minute,Dates.CompoundPeriod}=Hour(14) + Minute(30),
     )
         start_dt = DateTime(start_date) .+ market_time
         return new(start_date, start_date, [start_dt])

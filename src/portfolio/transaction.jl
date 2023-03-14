@@ -36,14 +36,13 @@ struct Transaction
         dt::DateTime,
         price::Float64,
         fee::Float64,
-        order_id::String = generate_id(),
+        order_id::String=generate_id(),
     )
         return new(asset, float(quantity), dt, price, fee, order_id)
     end
 end
 
 direction(txn::Transaction) = Int(sign(txn.quantity::Float64)::Float64)::Int
-
 
 """
 ```julia
@@ -82,4 +81,3 @@ Returns
 function cost_with_fee(txn::Transaction)
     return txn.quantity * txn.price + txn.fee
 end
-

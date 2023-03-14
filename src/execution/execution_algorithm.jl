@@ -12,7 +12,6 @@ The execution algorithm returns the vector of orders
 """
 struct MarketOrderExecutionAlgorithm <: ExecutionAlgorithm end
 
-
 function execute(algo::MarketOrderExecutionAlgorithm, rebalance_orders::Vector{Order})
     return rebalance_orders
 end

@@ -1,6 +1,6 @@
 
 @testset "Portfolio Optimizer" begin
-    ds = CSVDailyBarSource("./test_data"; csv_symbols = [:AMD, :NVDA])
+    ds = CSVDailyBarSource("./test_data"; csv_symbols=[:AMD, :NVDA])
     dh = BacktestDataHandler([ds])
 
     port_optimizer = FixedWeightPortfolioOptimizer(dh)

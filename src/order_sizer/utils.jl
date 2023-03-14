@@ -36,9 +36,7 @@ function _calculate_asset_quantity(fee_model::FeeModel, max_cost::Float64, price
 end
 
 function _calculate_asset_quantity(
-    fee_model::ZeroFeeModel,
-    max_cost::Float64,
-    price::Float64,
+    fee_model::ZeroFeeModel, max_cost::Float64, price::Float64
 )
     return Int(floor(max_cost / price))
 end

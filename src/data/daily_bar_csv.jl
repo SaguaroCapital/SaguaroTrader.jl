@@ -1,43 +1,43 @@
 
 function _csv_file_to_symbol(csv_file::String)
-    return splitpath(csv_file) |> x -> replace(x[end], ".csv" => "") |> Symbol
+    return (x -> Symbol(replace(x[end], ".csv" => "")))(splitpath(csv_file))
 end
 
 function _load_csv_into_df(
     csv_file::String,
     adjust_prices::Bool,
-    market_open::Dates.CompoundPeriod = Hour(14) + Minute(30),
-    market_close::Dates.CompoundPeriod = Hour(21) + Minute(59),
-    start_dt::DateTime = DateTime(1900),
-    end_dt::DateTime = DateTime(2100);
-    time_col::Symbol = :timestamp,
-    open_col::Symbol = :Open,
-    close_col::Symbol = :Close,
+    market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
+    market_close::Dates.CompoundPeriod=Hour(21) + Minute(59),
+    start_dt::DateTime=DateTime(1900),
+    end_dt::DateTime=DateTime(2100);
+    time_col::Symbol=:timestamp,
+    open_col::Symbol=:Open,
+    close_col::Symbol=:Close,
 )
-    df = CSV.File(csv_file) |> DataFrame
+    df = DataFrame(CSV.File(csv_file))
     mask = (df[:, time_col] .>= start_dt) .& (df[:, time_col] .<= end_dt)
     df = df[mask, :]
     return _convert_bar_frame_into_df_bid_ask(
         df;
-        adjust_prices = adjust_prices,
-        market_open = market_open,
-        market_close = market_close,
-        time_col = time_col,
-        open_col = open_col,
-        close_col = close_col,
+        adjust_prices=adjust_prices,
+        market_open=market_open,
+        market_close=market_close,
+        time_col=time_col,
+        open_col=open_col,
+        close_col=close_col,
     )
 end
 
 function _load_csvs_into_dfs(
     csv_files::Vector{String},
-    adjust_prices::Bool = false,
-    market_open::Dates.CompoundPeriod = Hour(14) + Minute(30),
-    market_close::Dates.CompoundPeriod = Hour(21) + Minute(59),
-    start_dt = DateTime(1900),
-    end_dt = DateTime(2100);
-    time_col::Symbol = :timestamp,
-    open_col::Symbol = :Open,
-    close_col::Symbol = :Close,
+    adjust_prices::Bool=false,
+    market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
+    market_close::Dates.CompoundPeriod=Hour(21) + Minute(59),
+    start_dt=DateTime(1900),
+    end_dt=DateTime(2100);
+    time_col::Symbol=:timestamp,
+    open_col::Symbol=:Open,
+    close_col::Symbol=:Close,
 )
     dict_asset_dfs = Dict{Symbol,DataFrame}()
     for file in csv_files
@@ -55,7 +55,6 @@ function _load_csvs_into_dfs(
     end
     return dict_asset_dfs
 end
-
 
 function _detect_adj_column(columns::Vector{String}, identifier::String)
     identifier = lowercase(identifier)
@@ -75,21 +74,21 @@ function _detect_adj_column(columns::Vector{String}, identifier::String)
             return col
         end
     end
-    error("Unable to detect '$identifier' column in columns: $columns")
+    return error("Unable to detect '$identifier' column in columns: $columns")
 end
 
 """
 Taken from Impute.jl, because it was breaking the build
 """
-function _impute_locf(data::AbstractVector{Union{T,Missing}}, limit = nothing) where {T}
+function _impute_locf(data::AbstractVector{Union{T,Missing}}, limit=nothing) where {T}
     @assert !all(ismissing, data)
     start_idx = findfirst(!ismissing, data)
     count = 1
 
-    @inbounds for i = start_idx+1:lastindex(data)
+    @inbounds for i in (start_idx + 1):lastindex(data)
         if ismissing(data[i])
             if limit === nothing
-                data[i] = data[i-1]
+                data[i] = data[i - 1]
             elseif count <= limit
                 data[i] = data[start_idx]
                 count += 1
@@ -102,7 +101,6 @@ function _impute_locf(data::AbstractVector{Union{T,Missing}}, limit = nothing) w
 
     return data
 end
-
 
 """
 Estimate Bid-Ask spreads from OHLCV data
@@ -120,12 +118,12 @@ Returns
 """
 function _convert_bar_frame_into_df_bid_ask(
     df_bar::DataFrame;
-    adjust_prices::Bool = true,
-    market_open::Dates.CompoundPeriod = Hour(14) + Minute(30),
-    market_close::Dates.CompoundPeriod = Hour(20) + Minute(59),
-    time_col::Symbol = :timestamp,
-    open_col::Symbol = :Open,
-    close_col::Symbol = :Close,
+    adjust_prices::Bool=true,
+    market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
+    market_close::Dates.CompoundPeriod=Hour(20) + Minute(59),
+    time_col::Symbol=:timestamp,
+    open_col::Symbol=:Open,
+    close_col::Symbol=:Close,
 )
     sort!(df_bar, time_col)
 
@@ -138,9 +136,7 @@ function _convert_bar_frame_into_df_bid_ask(
             (df_oc[:, adj_close_column] ./ df_oc[:, close_col]) .* df_oc[:, open_col]
         select!(df_oc, [time_col, adj_open_column, adj_close_column])
         DataFrames.rename!(
-            df_oc,
-            adj_open_column => open_col,
-            adj_close_column => close_col,
+            df_oc, adj_open_column => open_col, adj_close_column => close_col
         )
     else
         df_oc = select(df_bar, [time_col, open_col, close_col])
@@ -163,20 +159,19 @@ function _convert_bar_frame_into_df_bid_ask(
 
     # fill 0 open/close values with the other
     #TODO: should we do this?
-    df_open[df_open.Ask.==0.0, :Ask] = df_close[df_open.Ask.==0.0, :Ask]
-    df_close[df_close.Ask.==0.0, :Ask] = df_open[df_close.Ask.==0.0, :Ask]
+    df_open[df_open.Ask .== 0.0, :Ask] = df_close[df_open.Ask .== 0.0, :Ask]
+    df_close[df_close.Ask .== 0.0, :Ask] = df_open[df_close.Ask .== 0.0, :Ask]
 
     # create bid/ask df
-    df_bid = vcat(df_open, df_close; cols = :union)
+    df_bid = vcat(df_open, df_close; cols=:union)
     sort!(df_bid, time_col)
     if any(ismissing.(df_bid.Ask))
-        df_bid = transform(df_bid, "Ask" .=> _impute_locf, renamecols = false)
+        df_bid = transform(df_bid, "Ask" .=> _impute_locf; renamecols=false)
     end
     df_bid.Bid = df_bid.Ask
 
     return df_bid
 end
-
 
 """
 Encapsulates loading, preparation and querying of CSV files of
@@ -214,22 +209,23 @@ struct CSVDailyBarSource <: DataSource
     market_close::Dates.CompoundPeriod
     function CSVDailyBarSource(
         csv_dir::String;
-        asset_type::DataType = Equity,
-        adjust_prices::Bool = false,
-        csv_symbols::Union{Nothing,Vector{Symbol}} = nothing,
-        market_open::Dates.CompoundPeriod = Hour(14) + Minute(30),
-        market_close::Dates.CompoundPeriod = Hour(20) + Minute(59),
-        start_dt::DateTime = DateTime(1900), #TODO: multiple dispatch 
-        end_dt::DateTime = DateTime(2100),
-        time_col::Symbol = :timestamp,
-        open_col::Symbol = :Open,
-        close_col::Symbol = :Close,
+        asset_type::DataType=Equity,
+        adjust_prices::Bool=false,
+        csv_symbols::Union{Nothing,Vector{Symbol}}=nothing,
+        market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
+        market_close::Dates.CompoundPeriod=Hour(20) + Minute(59),
+        start_dt::DateTime=DateTime(1900), #TODO: multiple dispatch 
+        end_dt::DateTime=DateTime(2100),
+        time_col::Symbol=:timestamp,
+        open_col::Symbol=:Open,
+        close_col::Symbol=:Close,
     )
         @assert start_dt < end_dt "Start Date $start_dt must be before $end_dt"
         csv_files = [joinpath(csv_dir, i) for i in readdir(csv_dir) if occursin(".csv", i)]
         if !isnothing(csv_symbols)
-            csv_files =
-                [i for i in csv_files if any(_csv_file_to_symbol(i) .== csv_symbols)]
+            csv_files = [
+                i for i in csv_files if any(_csv_file_to_symbol(i) .== csv_symbols)
+            ]
         else
             csv_symbols = [_csv_file_to_symbol(i) for i in csv_files]
         end
@@ -242,7 +238,7 @@ struct CSVDailyBarSource <: DataSource
             end_dt;
             time_col,
             open_col,
-            close_col
+            close_col,
         )
         assets = [asset_type(Symbol(asset)) for asset in csv_symbols]
         return new(
@@ -256,9 +252,7 @@ struct CSVDailyBarSource <: DataSource
             market_close,
         )
     end
-
 end
-
 
 function get_bid(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)
     df_bid_ask = ds.dict_asset_dfs[asset]
@@ -266,10 +260,9 @@ function get_bid(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)
     if isnothing(ix) || (ix == 1)
         return float(NaN)::Float64
     else
-        return @inbounds df_bid_ask[ix-1, :Bid]::Float64
+        return @inbounds df_bid_ask[ix - 1, :Bid]::Float64
     end
 end
-
 
 function get_ask(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)
     df_bid_ask = ds.dict_asset_dfs[asset]
@@ -277,19 +270,15 @@ function get_ask(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)
     if isnothing(ix) || (ix == 1)
         return float(NaN)::Float64
     else
-        return @inbounds df_bid_ask[ix-1, :Ask]::Float64
+        return @inbounds df_bid_ask[ix - 1, :Ask]::Float64
     end
 end
 
-
 function get_assets_historical_bids(
-    ds::CSVDailyBarSource,
-    start_dt::DateTime,
-    end_dt::DateTime,
-    assets::Vector{Symbol},
+    ds::CSVDailyBarSource, start_dt::DateTime, end_dt::DateTime, assets::Vector{Symbol}
 )
     # TODO: do we want historical close like qstrader uses?
-    prices_df = DataFrame(timestamp = Vector{DateTime}())
+    prices_df = DataFrame(; timestamp=Vector{DateTime}())
     dict_keys = keys(ds.dict_asset_dfs)
     for asset in assets
         if !(asset in dict_keys)
@@ -301,27 +290,24 @@ function get_assets_historical_bids(
         df_bid_ask_subset = df_bid_ask[start_ix:end_ix, [:timestamp, :Bid]]::DataFrame
         if size(df_bid_ask_subset, 1) > 0
             DataFrames.rename!(df_bid_ask_subset, :Bid => asset)
-            prices_df = outerjoin(prices_df, df_bid_ask_subset, on = :timestamp)::DataFrame
+            prices_df = outerjoin(prices_df, df_bid_ask_subset; on=:timestamp)::DataFrame
         end
     end
     return prices_df
 end
-
-
 
 """
 Get a vector of all unique days where
 pricing data exists
 """
 function _get_unique_pricing_events(ds::CSVDailyBarSource)
-    df_events = DataFrame(timestamp = Vector{DateTime}(), event_type = Vector{Symbol}())
+    df_events = DataFrame(; timestamp=Vector{DateTime}(), event_type=Vector{Symbol}())
     for asset in ds.assets
         df_current_events = ds.dict_asset_dfs[asset.symbol][:, [:timestamp, :event_type]]
-        df_events = vcat(df_events, df_current_events) |> unique
+        df_events = unique(vcat(df_events, df_current_events))
     end
     return sort(df_events)
 end
-
 
 """
 ```julia

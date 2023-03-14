@@ -14,10 +14,9 @@
     alpha_model = RollingSignalsAlphaModel(dict_signal_weights)
     @test alpha_model(DateTime(2019, 12, 31)) == Dict{Asset,Float64}()
     @test alpha_model(DateTime(2020, 1, 1)) ==
-          Dict(Equity(:AMD) => 1.0, Equity(:INTC) => 1.0)
+        Dict(Equity(:AMD) => 1.0, Equity(:INTC) => 1.0)
     @test alpha_model(DateTime(2021, 1, 1)) == Dict(Equity(:INTC) => 1.0)
     @test alpha_model(DateTime(2022, 1, 1)) == Dict(Equity(:AMD) => 1.0)
-
 
     # single signal
     assets = [Equity(:AMD), Equity(:INTC)]

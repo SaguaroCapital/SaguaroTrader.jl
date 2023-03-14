@@ -1,5 +1,4 @@
 
-
 #TODO: Do we need this, or just a data handler?
 """
 Data Handler for backtesting
@@ -27,8 +26,8 @@ function _verify_unique_assets(data_sources::Vector)
         return nothing
     end
 
-    for ds1_ix = 1:(n_data_sources-1)
-        for ds2_ix = 2:(n_data_sources)
+    for ds1_ix in 1:(n_data_sources - 1)
+        for ds2_ix in 2:(n_data_sources)
             ds1 = data_sources[ds1_ix]
             ds2 = data_sources[ds2_ix]
             for key in keys(ds1.dict_asset_dfs)
@@ -74,7 +73,6 @@ function get_asset_latest_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol
     return bid
 end
 
-
 function get_asset_latest_bid_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol)
     bid = get_asset_latest_bid_price(dh, dt, asset)
     ask = get_asset_latest_ask_price(dh, dt, asset)
@@ -87,38 +85,32 @@ function get_asset_latest_mid_price(dh::DataHandler, dt::DateTime, asset::Symbol
 end
 
 function get_assets_historical_range_close_price(
-    dh::DataHandler,
-    start_dt::DateTime,
-    end_dt::DateTime,
-    assets::Vector{Symbol},
+    dh::DataHandler, start_dt::DateTime, end_dt::DateTime, assets::Vector{Symbol}
 )
-    df_prices = DataFrame(timestamp = Vector{DateTime})
+    df_prices = DataFrame(; timestamp=Vector{DateTime})
     for ds in dh.data_sources
         df_prices_temp = get_assets_historical_bids(ds, start_dt, end_dt, assets)
         if size(df_prices_temp, 1) > 0
-            df_prices = outerjoin(df_prices, df_prices_temp, on = :timestamp)
+            df_prices = outerjoin(df_prices, df_prices_temp; on=:timestamp)
         end
     end
     return df_prices
 end
-
 
 """
 Get a vector of all unique days where
 pricing data exists
 """
 function _get_unique_pricing_events(
-    dh::DataHandler,
-    start_dt::DateTime = DateTime(1900),
-    end_dt::DateTime = DateTime(2100),
+    dh::DataHandler, start_dt::DateTime=DateTime(1900), end_dt::DateTime=DateTime(2100)
 )
-    df_events = DataFrame(timestamp = Vector{DateTime}(), event_type = Vector{Symbol}())
+    df_events = DataFrame(; timestamp=Vector{DateTime}(), event_type=Vector{Symbol}())
     for ds in dh.data_sources
         df_ds_events = _get_unique_pricing_events(ds)
         time_mask =
             (df_ds_events.timestamp .>= start_dt) .& (df_ds_events.timestamp .<= end_dt)
         df_ds_events = df_ds_events[time_mask, :]
-        df_events = vcat(df_events, df_ds_events) |> unique
+        df_events = unique(vcat(df_events, df_ds_events))
     end
     return sort(df_events)
 end

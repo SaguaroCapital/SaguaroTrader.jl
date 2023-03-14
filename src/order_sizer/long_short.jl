@@ -11,18 +11,14 @@ Fields
 """
 struct LongShortOrderSizer <: OrderSizer
     gross_leverage::Float64
-    function LongShortOrderSizer(gross_leverage::Float64 = 1.0)
+    function LongShortOrderSizer(gross_leverage::Float64=1.0)
         @assert (gross_leverage > 0.0) "gross_leverage must be positive"
         return new(gross_leverage)
     end
 end
 
-
 function (order_sizer::LongShortOrderSizer)(
-    broker::Broker,
-    portfolio_id::String,
-    weights::Dict,
-    dt::DateTime,
+    broker::Broker, portfolio_id::String, weights::Dict, dt::DateTime
 )
     portfolio_equity = total_equity(broker.portfolios[portfolio_id])
     normalized_weights = _normalize_weights(weights)

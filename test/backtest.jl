@@ -6,13 +6,10 @@
     dh = BacktestDataHandler([ds])
     port_optimizer = EqualWeightPortfolioOptimizer(dh)
     broker = SimulatedBroker(
-        DateTime(2020),
-        SimulatedExchange(DateTime(2020)),
-        dh;
-        initial_cash = 100_000.0,
+        DateTime(2020), SimulatedExchange(DateTime(2020)), dh; initial_cash=100_000.0
     )
     portfolio_id = "test_port"
-    create_portfolio!(broker, 75_000; portfolio_id = portfolio_id)
+    create_portfolio!(broker, 75_000; portfolio_id=portfolio_id)
     order_sizer = DollarWeightedOrderSizer(0.01)
     signal_weights = Dict(Equity(:AMD) => 1.0, Equity(:INTC) => 1.0)
     alpha_model = FixedSignalsAlphaModel(signal_weights)

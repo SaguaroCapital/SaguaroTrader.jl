@@ -29,8 +29,8 @@ mutable struct Portfolio
         start_dt::DateTime,
         starting_cash::Float64,
         currency::String;
-        portfolio_id::String = string(UUIDs.uuid1()),
-        name::String = "",
+        portfolio_id::String=string(UUIDs.uuid1()),
+        name::String="",
     )
         # if we have starting cash, create a subscription event
         if starting_cash > 0.0
@@ -43,13 +43,7 @@ mutable struct Portfolio
         pos_handler = PositionHandler(Dict{Symbol,Position}())
 
         return new(
-            start_dt,
-            starting_cash,
-            currency,
-            pos_handler,
-            portfolio_id,
-            name,
-            history,
+            start_dt, starting_cash, currency, pos_handler, portfolio_id, name, history
         )
     end
 end
@@ -173,7 +167,6 @@ function transact_asset!(port::Portfolio, txn::Transaction)
 
     return nothing
 end
-
 
 """
 ```julia

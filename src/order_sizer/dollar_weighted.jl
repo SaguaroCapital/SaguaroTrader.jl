@@ -11,12 +11,11 @@ Fields
 """
 struct DollarWeightedOrderSizer <: OrderSizer
     cash_buffer_percentage::Float64
-    function DollarWeightedOrderSizer(cash_buffer_percentage::Float64 = 0.01)
+    function DollarWeightedOrderSizer(cash_buffer_percentage::Float64=0.01)
         @assert (cash_buffer_percentage >= 0.0) & (cash_buffer_percentage <= 1.0)
         return new(cash_buffer_percentage)
     end
 end
-
 
 """
 Creates a dollar-weighted cash-buffered target portfolio from the
@@ -25,10 +24,7 @@ provided target weights at a particular timestamp.
 #TODO: Work with short positions
 """
 function (order_sizer::DollarWeightedOrderSizer)(
-    broker::Broker,
-    portfolio_id::String,
-    weights::Dict,
-    dt::DateTime,
+    broker::Broker, portfolio_id::String, weights::Dict, dt::DateTime
 )
     portfolio_equity = total_equity(broker.portfolios[portfolio_id])
     cash_buffered_total_equity =

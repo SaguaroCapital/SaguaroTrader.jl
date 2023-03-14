@@ -8,7 +8,6 @@ abstract type FeeModel end
 include("zero_fee_model.jl")
 include("percent_fee_model.jl")
 
-
 """
 ```julia
 calculate_fee(fee_model::FeeModel, quantity::Real, price::Float64)

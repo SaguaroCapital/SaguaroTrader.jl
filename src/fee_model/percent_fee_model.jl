@@ -15,12 +15,10 @@ Fields
 struct PercentFeeModel <: FeeModel
     fee_pct::Float64
     tax_pct::Float64
-    function PercentFeeModel(; fee_pct::Float64 = 0.0, tax_pct::Float64 = 0.0)
+    function PercentFeeModel(; fee_pct::Float64=0.0, tax_pct::Float64=0.0)
         return new(fee_pct, tax_pct)
     end
 end
-
-
 
 function _calc_tax(fee_model::PercentFeeModel, quantity::Real, price::Float64)
     consideration = price * quantity

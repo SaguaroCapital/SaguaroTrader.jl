@@ -21,8 +21,8 @@ struct ExecutionHandler
     function ExecutionHandler(
         broker::Broker,
         portfolio_id::String;
-        execution_algorithm::ExecutionAlgorithm = MarketOrderExecutionAlgorithm(),
-        submit_orders::Bool = false,
+        execution_algorithm::ExecutionAlgorithm=MarketOrderExecutionAlgorithm(),
+        submit_orders::Bool=false,
     )
         return new(broker, portfolio_id, execution_algorithm, submit_orders)
     end
