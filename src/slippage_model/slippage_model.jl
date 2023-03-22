@@ -48,5 +48,4 @@ end
 """
 
 """
-struct VolumeSharesSlippageModel <: SlippageModel
-end
+struct VolumeSharesSlippageModel <: SlippageModel end

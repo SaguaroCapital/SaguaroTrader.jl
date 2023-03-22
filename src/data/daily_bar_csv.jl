@@ -256,21 +256,21 @@ end
 
 function get_bid(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)
     df_bid_ask = ds.dict_asset_dfs[asset]
-    ix = findfirst(>(dt), df_bid_ask.timestamp::Vector{DateTime})::Union{Nothing,Int64}
+    ix = searchsortedfirst(df_bid_ask.timestamp::Vector{DateTime}, dt)::Union{Nothing,Int64}
     if isnothing(ix) || (ix == 1)
         return float(NaN)::Float64
     else
-        return @inbounds df_bid_ask[ix - 1, :Bid]::Float64
+        return @inbounds df_bid_ask[ix, :Bid]::Float64
     end
 end
 
 function get_ask(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)
     df_bid_ask = ds.dict_asset_dfs[asset]
-    ix = findfirst(>(dt), df_bid_ask.timestamp::Vector{DateTime})::Union{Nothing,Int64}
+    ix = searchsortedfirst(df_bid_ask.timestamp::Vector{DateTime}, dt)::Union{Nothing,Int64}
     if isnothing(ix) || (ix == 1)
         return float(NaN)::Float64
     else
-        return @inbounds df_bid_ask[ix - 1, :Ask]::Float64
+        return @inbounds df_bid_ask[ix, :Ask]::Float64
     end
 end
 

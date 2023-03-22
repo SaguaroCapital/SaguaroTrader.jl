@@ -11,13 +11,11 @@
     ds = CSVDailyBarSource("./test_data/"; csv_symbols=[:AMD, :NVDA])
     @test ds.csv_symbols == [:AMD, :NVDA]
 
-    # bid = get_bid(ds, DateTime(2019, 4, 9, 14, 29), :AMD)
-    # @test bid == isnan(bid) #TODO: Do we want nan here?
     bid = get_bid(ds, DateTime(2019, 4, 9, 14, 30), :AMD)
     @test bid == 28.24
 
-    ask = get_ask(ds, DateTime(2019, 4, 9, 21, 0), :AMD)
-    @test ask == 27.24 # isnan(ask) #TODO: Do we want nan here?
+    ask = get_ask(ds, DateTime(2019, 4, 8, 21, 0), :AMD)
+    @test ask == 28.24
     ask = get_ask(ds, DateTime(2019, 4, 9, 20, 59), :AMD)
     @test ask == 27.24
 

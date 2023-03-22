@@ -2,5 +2,4 @@
 """
 
 """
-struct RiskModel
-end
+struct RiskModel end
