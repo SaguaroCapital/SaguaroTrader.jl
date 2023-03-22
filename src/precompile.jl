@@ -19,17 +19,17 @@ using SnoopPrecompile
 
         #####################################################################
         # Universe
-        assets = [Equity(:AMD), Equity(:INTC), Equity(:NVDA), Cash()]
-        uni = StaticUniverse(assets)
+        static_assets = [Equity(:AMD), Equity(:INTC), Equity(:NVDA), Cash()]
+        uni = StaticUniverse(static_assets)
 
         # dynamic universe
-        assets = Dict(
+        dynamic_assets = Dict(
             Equity(:AMD) => start_dt,
             Equity(:INTC) => start_dt,
             Equity(:NVDA) => start_dt,
             Cash() => start_dt,
         )
-        uni = DynamicUniverse(assets)
+        uni = DynamicUniverse(dynamic_assets)
         _get_assets(uni, end_dt)
 
         #####################################################################
@@ -51,7 +51,7 @@ using SnoopPrecompile
 
         #####################################################################
         # Fee Model
-        calculate_fee(ZeroFeeModel(), 100.0, 10.0) 
+        calculate_fee(ZeroFeeModel(), 100.0, 10.0)
         calculate_fee(PercentFeeModel(; tax_pct=0.15, fee_pct=0.10), 100.0, 10.0)
 
         #####################################################################
@@ -66,7 +66,7 @@ using SnoopPrecompile
 
         port = Portfolio(DateTime(2022, 1, 1), 100_000.0, "USD")
         total_market_value(port)
-        total_equity(port) 
+        total_equity(port)
         total_unrealized_pnl(port)
         total_realized_pnl(port)
         total_pnl(port)
@@ -79,11 +79,9 @@ using SnoopPrecompile
         # Alpha Model
         alpha_model = FixedSignalsAlphaModel(signal_weights)
         alpha_model(DateTime(2022, 1, 1))
-        alpha_model = SingleSignalAlphaModel(StaticUniverse(assets), 1.0)
+        alpha_model = SingleSignalAlphaModel(StaticUniverse(static_assets), 1.0)
         alpha_model(DateTime(2022, 1, 1))
         alpha_model = RollingSignalsAlphaModel(rolling_signal_weights)
-        alpha_model(DateTime(2019, 12, 31)) 
-        alpha_model(DateTime(2020, 1, 1)) 
-
+        alpha_model(DateTime(2022, 1, 1))
     end
 end
