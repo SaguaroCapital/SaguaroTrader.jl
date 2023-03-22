@@ -69,17 +69,6 @@ end
     @test pe.type == "sell_asset"
 end
 
-@testset "PortfolioEvent" begin
-    pe = create_subscription(DateTime(2022, 1, 1), 50.0, 100.0)
-    @test pe.type == "subscription"
-    pe = create_withdrawal(DateTime(2022, 1, 1), 50.0, 100.0)
-    @test pe.type == "withdrawal"
-    pe = create_asset_transaction(DateTime(2022, 1, 1), 50.0, 100.0, 1)
-    @test pe.type == "buy_asset"
-    pe = create_asset_transaction(DateTime(2022, 1, 1), 50.0, 100.0, -1)
-    @test pe.type == "sell_asset"
-end
-
 @testset "Portfolio" begin
     port = Portfolio(DateTime(2022, 1, 1), 100_000.0, "USD")
     @test total_market_value(port) == 0.0
