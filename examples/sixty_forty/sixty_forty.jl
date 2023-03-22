@@ -1,6 +1,6 @@
 # https://github.com/mhallsmoore/qstrader/blob/master/examples/sixty_forty.py
 using SaguaroTrader
-using SaguaroTrader.SaguaroTraderResults
+using SaguaroTraderResults
 using CSV
 using DataFrames
 using MarketData
@@ -14,7 +14,7 @@ initial_cash = 100_000.0
 
 # Download market data for SPY, AGG
 if !isfile("./temp/AGG.csv") & !isfile("./temp/SPY.csv")
-    download_market_data([:SPY, :AGG]; start_dt=start_dt)
+    download_market_data([:SPY, :AGG]; start_dt=DateTime(2004, 12, 25))
 end
 
 #####################################################
