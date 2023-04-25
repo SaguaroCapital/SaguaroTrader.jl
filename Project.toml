@@ -1,7 +1,7 @@
 name = "SaguaroTrader"
 uuid = "26277856-a3f7-4646-aaac-f090473ab108"
 authors = ["Tyler Thomas <tyler@saguarocm.com>"]
-version = "0.1.2"
+version = "0.2.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
