@@ -214,7 +214,7 @@ struct CSVDailyBarSource <: DataSource
         csv_symbols::Union{Nothing,Vector{Symbol}}=nothing,
         market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
         market_close::Dates.CompoundPeriod=Hour(20) + Minute(59),
-        start_dt::DateTime=DateTime(1900), #TODO: multiple dispatch 
+        start_dt::DateTime=DateTime(1900), 
         end_dt::DateTime=DateTime(2100),
         time_col::Symbol=:timestamp,
         open_col::Symbol=:Open,
