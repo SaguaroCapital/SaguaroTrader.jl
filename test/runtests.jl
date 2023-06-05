@@ -1,4 +1,5 @@
 
+using Aqua
 using CSV
 using DataFrames
 using Dates
@@ -28,4 +29,8 @@ for t in tests
     fp = "$(t).jl"
     println("* $fp ...")
     include(fp)
+end
+
+@testset verbose = true "Code quality (Aqua.jl)" begin
+    Aqua.test_all(SaguaroTrader; ambiguities=false)
 end
