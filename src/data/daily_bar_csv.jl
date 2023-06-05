@@ -78,31 +78,6 @@ function _detect_adj_column(columns::Vector{String}, identifier::String)
 end
 
 """
-Taken from Impute.jl, because it was breaking the build
-"""
-function _impute_locf(data::AbstractVector{Union{T,Missing}}, limit=nothing) where {T}
-    @assert !all(ismissing, data)
-    start_idx = findfirst(!ismissing, data)
-    count = 1
-
-    @inbounds for i in (start_idx + 1):lastindex(data)
-        if ismissing(data[i])
-            if limit === nothing
-                data[i] = data[i - 1]
-            elseif count <= limit
-                data[i] = data[start_idx]
-                count += 1
-            end
-        else
-            start_idx = i
-            count = 1
-        end
-    end
-
-    return data
-end
-
-"""
 Estimate Bid-Ask spreads from OHLCV data
 
 Parameters
@@ -166,7 +141,11 @@ function _convert_bar_frame_into_df_bid_ask(
     df_bid = vcat(df_open, df_close; cols=:union)
     sort!(df_bid, time_col)
     if any(ismissing.(df_bid.Ask))
-        df_bid = transform(df_bid, "Ask" .=> _impute_locf; renamecols=false)
+        df_bid = transform(
+            df_bid,
+            "Ask" .=> x -> impute(x, LOCF(; limit=limit); dims=:cols);
+            renamecols=false,
+        )
     end
     df_bid.Bid = df_bid.Ask
 
@@ -214,7 +193,7 @@ struct CSVDailyBarSource <: DataSource
         csv_symbols::Union{Nothing,Vector{Symbol}}=nothing,
         market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
         market_close::Dates.CompoundPeriod=Hour(20) + Minute(59),
-        start_dt::DateTime=DateTime(1900), #TODO: multiple dispatch 
+        start_dt::DateTime=DateTime(1900),
         end_dt::DateTime=DateTime(2100),
         time_col::Symbol=:timestamp,
         open_col::Symbol=:Open,

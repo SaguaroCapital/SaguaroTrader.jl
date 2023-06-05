@@ -39,8 +39,6 @@ function _create_rebalance_orders(
     target_positions::Dict{Asset,Int},
     dt::DateTime,
 )
-    # TODO: Add the ability to ride positions for longer without trimming/adding every period
-    # zero out positions not in target portfolio
     target_positions_assets = keys(target_positions)
     rebalance_orders_dict = Dict{Asset,Order}()
     for (_, position) in current_positions
@@ -88,7 +86,6 @@ Returns
 - `Dict{Asset, Int}`: Rebalance orders
 """
 function _create_rebalance_orders(pcm::PortfolioConstructionModel, dt::DateTime)
-    # full_asset = _get_assets(pcm) # TODO: do we need the full asset list?
     weights = pcm.alpha_model(dt)
     target_positions = pcm.order_sizer(pcm.broker, pcm.portfolio_id, weights, dt)
     current_positions = _get_current_positions(pcm)

@@ -4,6 +4,7 @@ using CSV
 using DataFrames
 using Dates
 using DataStructures
+using Impute
 using Random
 using UUIDs
 
@@ -81,7 +82,6 @@ export
     Portfolio,
     total_market_value,
     total_equity,
-    subscribe_funds,
 
     # alpha model
     AlphaModel,
