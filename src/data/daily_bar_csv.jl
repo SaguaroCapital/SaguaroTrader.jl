@@ -104,6 +104,7 @@ function _convert_bar_frame_into_df_bid_ask(
 
     # create open/close df
     if adjust_prices
+        cols = names(df_bar)
         adj_open_column = _detect_adj_column(cols, "open")
         adj_close_column = _detect_adj_column(cols, "close")
         df_oc = df_bar[:, [time_col, open_col, close_col, adj_close_column]]
@@ -143,7 +144,7 @@ function _convert_bar_frame_into_df_bid_ask(
     if any(ismissing.(df_bid.Ask))
         df_bid = transform(
             df_bid,
-            "Ask" .=> x -> impute(x, LOCF(; limit=limit); dims=:cols);
+            "Ask" .=> x -> impute(x, LOCF(; limit=nothing); dims=:cols);
             renamecols=false,
         )
     end
@@ -253,6 +254,24 @@ function get_ask(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
     end
 end
 
+function _get_timestamp_start(start_dt::DateTime, v::Vector{DateTime})::keytype(v)
+    start_ix = findfirst(>=(start_dt), v)
+    if start_ix === nothing
+        return firstindex(v)
+    else
+        return start_ix
+    end
+end
+
+function _get_timestamp_end(end_dt::DateTime, v::Vector{DateTime})::keytype(v)
+    end_ix = findlast(<=(end_dt), v)
+    if end_ix === nothing
+        return firstindex(v)
+    else
+        return end_ix
+    end
+end
+
 function get_assets_historical_bids(
     ds::CSVDailyBarSource, start_dt::DateTime, end_dt::DateTime, assets::Vector{Symbol}
 )
@@ -264,8 +283,9 @@ function get_assets_historical_bids(
             continue
         end
         df_bid_ask = ds.dict_asset_dfs[asset]
-        start_ix = findfirst(>=(start_dt), df_bid_ask.timestamp::Vector{DateTime})
-        end_ix = findlast(<=(end_dt), df_bid_ask.timestamp::Vector{DateTime})
+        timestamp = df_bid_ask.timestamp::Vector{DateTime}
+        start_ix = _get_timestamp_start(start_dt, timestamp)
+        end_ix = _get_timestamp_end(end_dt, timestamp)
         df_bid_ask_subset = df_bid_ask[start_ix:end_ix, [:timestamp, :Bid]]::DataFrame
         if size(df_bid_ask_subset, 1) > 0
             DataFrames.rename!(df_bid_ask_subset, :Bid => asset)
