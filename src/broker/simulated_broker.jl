@@ -44,7 +44,7 @@ mutable struct SimulatedBroker <: Broker
 
         cash_balances = Dict{String,Float64}(base_currency => initial_cash)
         portfolios = Dict{String,Portfolio}()
-        open_orders = Dict{String,Order}()
+        open_orders = Dict{String,Queue{Order}}()
 
         return new(
             start_dt,
