@@ -141,7 +141,11 @@ function _convert_bar_frame_into_df_bid_ask(
     df_bid = vcat(df_open, df_close; cols=:union)
     sort!(df_bid, time_col)
     if any(ismissing.(df_bid.Ask))
-        df_bid = transform(df_bid, "Ask" .=> x -> impute(x, LOCF(;limit=limit); dims=:cols); renamecols=false)
+        df_bid = transform(
+            df_bid,
+            "Ask" .=> x -> impute(x, LOCF(; limit=limit); dims=:cols);
+            renamecols=false,
+        )
     end
     df_bid.Bid = df_bid.Ask
 
@@ -189,7 +193,7 @@ struct CSVDailyBarSource <: DataSource
         csv_symbols::Union{Nothing,Vector{Symbol}}=nothing,
         market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
         market_close::Dates.CompoundPeriod=Hour(20) + Minute(59),
-        start_dt::DateTime=DateTime(1900), 
+        start_dt::DateTime=DateTime(1900),
         end_dt::DateTime=DateTime(2100),
         time_col::Symbol=:timestamp,
         open_col::Symbol=:Open,
