@@ -84,7 +84,7 @@ end
 
 function withdraw_funds!(broker::Broker, amount::Real, currency::String)
     @assert amount >= 0 "Can not debit negative amount: $amount"
-    @assert currency in broker.cash_balances "Unknown currency $currency"
+    @assert currency in keys(broker.cash_balances) "Unknown currency $currency"
     error_msg = "Can not withdraw $amount, because it is more than the cash balance of $(broker.cash_balances[currency])"
     @assert amount <= broker.cash_balances[currency] error_msg
 
@@ -186,7 +186,9 @@ function _execute_order(broker::Broker, dt::DateTime, portfolio_id::String, orde
     else # sell
         price = bid_ask[1]
     end
-    price = broker.slippage_model(order.direction; price, volume)
+    price = broker.slippage_model(
+        order.direction; price, volume, order_quantity=order.quantity
+    )
 
     consideration = round(price * order.quantity; digits=2)
     fee = calculate_fee(broker.fee_model, order.quantity, price)

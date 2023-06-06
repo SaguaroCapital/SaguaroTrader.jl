@@ -17,7 +17,7 @@ Returns
 struct ZeroSlippageModel <: SlippageModel end
 
 function (slippage_model::ZeroSlippageModel)(
-    direction::Int; price::Float64=0.0, volume::Float64=0.0
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
 )
     return price
 end
@@ -41,7 +41,7 @@ struct FixedSlippageModel <: SlippageModel
 end
 
 function (slippage_model::FixedSlippageModel)(
-    direction::Int; price::Float64=0.0, volume::Float64=0.0
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
 )
     return price + (slippage_model.spread / 2.0) * direction
 end
@@ -65,7 +65,7 @@ struct PercentSlippageModel <: SlippageModel
 end
 
 function (slippage_model::PercentSlippageModel)(
-    direction::Int; price::Float64=0.0, volume::Float64=0.0
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
 )
     return price + ((slippage_model.slippage_pct / 100) * price / 2.0) * direction
 end
@@ -73,24 +73,25 @@ end
 """
 Slippage is based on the ratio of order volume to total volume
 
-Buy orders will execute at `ask * (1 + (volume_shares_pct/100) * order.volume / total_volume)`
-Sell orders will execute at `bid * (1 - (volume_shares_pct/100) * order.volume / total_volume)`
+Buy orders will execute at `ask + (volume_share^2 * price_impact * price * direction)`
+Sell orders will execute at `bid - (volume_share^2 * price_impact * price * direction)`
 
 Fields
 ------
-- `volume_shares_pct::Float64`
+- `price_impact::Float64=0.1` - The scaling coefficient for price impact. Larger values will result in larger price impacts.
 
 Returns
 -------
 - `Float64`: The price including slippage
 """
 struct VolumeSharesSlippageModel <: SlippageModel
-    volume_shares_pct::Float64
+    price_impact::Float64
 end
 
 function (slippage_model::VolumeSharesSlippageModel)(
-    direction::Int; price::Float64=0.0, volume::Float64=0.0
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
 )
-    ratio = order.volume / volume
-    return price + ((slippage_model.volume_shares_pct / 100) * price * ratio) * direction
+    volume_share = order_quantity / volume
+    simulated_impact = volume_share^2 * slippage_model.price_impact * price * direction
+    return price + simulated_impact
 end
