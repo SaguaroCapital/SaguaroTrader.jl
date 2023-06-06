@@ -186,7 +186,9 @@ function _execute_order(broker::Broker, dt::DateTime, portfolio_id::String, orde
     else # sell
         price = bid_ask[1]
     end
-    price = broker.slippage_model(order.direction; price, volume, order_quantity=order.quantity)
+    price = broker.slippage_model(
+        order.direction; price, volume, order_quantity=order.quantity
+    )
 
     consideration = round(price * order.quantity; digits=2)
     fee = calculate_fee(broker.fee_model, order.quantity, price)
