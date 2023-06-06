@@ -26,4 +26,11 @@
     @test broker.portfolios["test_port"].cash == 75198.0
     withdraw_funds_from_portfolio!(broker, "test_port", 5_000)
     @test broker.portfolios["test_port"].cash == 70198.0
+    subscribe_funds!(broker, 25_000, "USD")
+    @test broker.cash_balances["USD"] == 50_000.0
+    withdraw_funds!(broker, 25_000, "USD")
+    @test broker.cash_balances["USD"] == 25_000.0
+
+    @test SaguaroTrader.get_total_market_value(broker) == 4802.0
+    @test SaguaroTrader.get_account_total_equity(broker) == 100000.0
 end
