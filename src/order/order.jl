@@ -10,6 +10,7 @@ Fields
 - `fee::Float64` - order fee
 - `order_id::String` - unique order id
 - `direction::Int`  1=>buy, -1=>sell
+- `direction::Float64` - Asset volume (for predicting slippage)
 """
 struct Order
     created_dt::DateTime
@@ -18,6 +19,7 @@ struct Order
     fee::Float64
     order_id::String
     direction::Int
+    volume::Float64
     # type::Symbol #TODO: add order types (market, limit, ...)
     function Order(
         order_dt::DateTime,

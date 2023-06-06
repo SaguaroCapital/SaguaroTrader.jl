@@ -16,8 +16,8 @@ include("exchange/exchange.jl")
 include("data/data.jl")
 include("portfolio/portfolio.jl")
 include("portfolio_optimizer/portfolio_optimizer.jl")
-
 include("slippage_model/slippage_model.jl")
+
 include("alpha_model/alpha_model.jl")
 include("risk_model/risk_model.jl")
 include("rebalance/rebalance.jl")
@@ -91,8 +91,10 @@ export
 
     # slippage model
     SlippageModel,
+    ZeroSlippageModel,
     FixedSlippageModel,
     PercentSlippageModel,
+    VolumeSharesSlippageModel,
 
     # portfolio optimizer
     PortfolioOptimizer,
