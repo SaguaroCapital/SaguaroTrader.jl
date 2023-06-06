@@ -13,18 +13,20 @@ function _load_csv_into_df(
     time_col::Symbol=:timestamp,
     open_col::Symbol=:Open,
     close_col::Symbol=:Close,
+    volume_col::Symbol=:Volume,
 )
     df = DataFrame(CSV.File(csv_file))
     mask = (df[:, time_col] .>= start_dt) .& (df[:, time_col] .<= end_dt)
     df = df[mask, :]
     return _convert_bar_frame_into_df_bid_ask(
         df;
-        adjust_prices=adjust_prices,
-        market_open=market_open,
-        market_close=market_close,
-        time_col=time_col,
-        open_col=open_col,
-        close_col=close_col,
+        adjust_prices,
+        market_open,
+        market_close,
+        time_col,
+        open_col,
+        close_col,
+        volume_col,
     )
 end
 
@@ -38,6 +40,7 @@ function _load_csvs_into_dfs(
     time_col::Symbol=:timestamp,
     open_col::Symbol=:Open,
     close_col::Symbol=:Close,
+    volume_col::Symbol=:Volume,
 )
     dict_asset_dfs = Dict{Symbol,DataFrame}()
     for file in csv_files
@@ -51,6 +54,7 @@ function _load_csvs_into_dfs(
             time_col,
             open_col,
             close_col,
+            volume_col,
         )
     end
     return dict_asset_dfs
@@ -99,6 +103,7 @@ function _convert_bar_frame_into_df_bid_ask(
     time_col::Symbol=:timestamp,
     open_col::Symbol=:Open,
     close_col::Symbol=:Close,
+    volume_col::Symbol=:Volume,
 )
     sort!(df_bar, time_col)
 
@@ -115,23 +120,24 @@ function _convert_bar_frame_into_df_bid_ask(
             df_oc, adj_open_column => open_col, adj_close_column => close_col
         )
     else
-        df_oc = select(df_bar, [time_col, open_col, close_col])
+        df_oc = select(df_bar, [time_col, open_col, close_col, volume_col])
     end
-    dropmissing!(df_oc)
+    dropmissing!(df_oc, [time_col, open_col, close_col])
 
     # Convert bars into separate rows for open/close prices
     # appropriately timestamped
     df_open = select(df_oc, [time_col, open_col])
     df_open[!, time_col] = DateTime.(df_open[!, time_col]) .+ market_open
     df_open[:, :event_type] .= :market_open
-    df_close = select(df_oc, [time_col, close_col])
+    df_close = select(df_oc, [time_col, close_col, volume_col])
     df_close[!, time_col] = DateTime.(df_close[!, time_col]) .+ market_close
     df_close[:, :event_type] .= :market_close
 
-    # rename open, close, time columns
-    DataFrames.rename!(df_open, open_col::Symbol => :Ask)
-    DataFrames.rename!(df_close, close_col::Symbol => :Ask)
+    # rename open, close, volume, time columns
+    DataFrames.rename!(df_open, open_col => :Ask)
+    DataFrames.rename!(df_close, close_col => :Ask)
     DataFrames.rename!(df_close, time_col => :timestamp)
+    DataFrames.rename!(df_close, volume_col => :Volume)
 
     # fill 0 open/close values with the other
     #TODO: should we do this?
@@ -199,6 +205,7 @@ struct CSVDailyBarSource <: DataSource
         time_col::Symbol=:timestamp,
         open_col::Symbol=:Open,
         close_col::Symbol=:Close,
+        volume_col::Symbol=:Volume,
     )
         @assert start_dt < end_dt "Start Date $start_dt must be before $end_dt"
         csv_files = [joinpath(csv_dir, i) for i in readdir(csv_dir) if occursin(".csv", i)]
@@ -219,6 +226,7 @@ struct CSVDailyBarSource <: DataSource
             time_col,
             open_col,
             close_col,
+            volume_col,
         )
         assets = [asset_type(Symbol(asset)) for asset in csv_symbols]
         return new(
@@ -251,6 +259,16 @@ function get_ask(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
         return NaN
     else
         return @inbounds df_bid_ask[ix, :Ask]::Float64
+    end
+end
+
+function get_volume(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
+    df_bid_ask = ds.dict_asset_dfs[asset]
+    ix = searchsortedfirst(df_bid_ask.timestamp::Vector{DateTime}, dt)::Int64
+    if (ix == 1) || (ix > size(df_bid_ask, 1))
+        return NaN
+    else
+        return @inbounds df_bid_ask[ix, :Volume]::Float64
     end
 end
 

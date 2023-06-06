@@ -99,8 +99,10 @@ SingleSignalAlphaModel
 # Slippage Model
 ```@docs
 SlippageModel
+ZeroSlippageModel
 FixedSlippageModel
 PercentSlippageModel
+VolumeSharesSlippageModel
 ```
 
 # Broker

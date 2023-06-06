@@ -25,7 +25,7 @@ mutable struct SimulatedBroker <: Broker
     base_currency::String
     initial_cash::Float64
     fee_model::FeeModel
-    # slippage_model::AbstractSlippageModel # TODO: Implement
+    slippage_model::SlippageModel
     # market_impact_model::AbstractMarketImpactModel # TODO: Implement
     cash_balances::Dict{String,Float64}
     portfolios::Dict{String,Portfolio}
@@ -38,7 +38,8 @@ mutable struct SimulatedBroker <: Broker
         account_id::String="",
         base_currency::String="USD",
         initial_cash::Float64=0.0,
-        fee_model=ZeroFeeModel(),
+        fee_model::FeeModel=ZeroFeeModel(),
+        slippage_model::SlippageModel=ZeroSlippageModel(),
     )
         @assert initial_cash >= 0.0 "initial cash must be >= 0"
 
@@ -55,6 +56,7 @@ mutable struct SimulatedBroker <: Broker
             base_currency,
             initial_cash,
             fee_model,
+            slippage_model,
             cash_balances,
             portfolios,
             open_orders,
@@ -170,6 +172,7 @@ Execute order, and create transaction
 """
 function _execute_order(broker::Broker, dt::DateTime, portfolio_id::String, order::Order)
     bid_ask = get_asset_latest_bid_ask_price(broker.data_handler, dt, order.asset.symbol)
+    volume = get_asset_latest_volume(broker.data_handler, dt, order.asset.symbol)
 
     if bid_ask === (missing, missing)
         error(
@@ -183,6 +186,7 @@ function _execute_order(broker::Broker, dt::DateTime, portfolio_id::String, orde
     else # sell
         price = bid_ask[1]
     end
+    price = broker.slippage_model(order.direction; price, volume)
 
     consideration = round(price * order.quantity; digits=2)
     fee = calculate_fee(broker.fee_model, order.quantity, price)
