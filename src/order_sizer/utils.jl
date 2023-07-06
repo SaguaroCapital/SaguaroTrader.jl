@@ -19,6 +19,25 @@ function _normalize_weights(weights::Dict)
     end
 end
 
+function _normalize_weights_long_short(weights::Dict, gross_leverage::Float64=1.0)
+    weight_sum = 0.0
+    for (asset, weight) in weights
+        weight_sum += abs(weight)
+    end
+
+    if weight_sum == 0
+        return weights
+    else
+        gross_ratio = gross_leverage / weight_sum
+
+        normalized_weights = copy(weights)
+        for asset in keys(normalized_weights)
+            normalized_weights[asset] *= gross_ratio
+        end
+        return normalized_weights
+    end
+end
+
 """
 Using the max amount that we are willing to pay for an equity, 
 calculate the quantity that we should buy to get as close
@@ -33,10 +52,4 @@ function _calculate_asset_quantity(fee_model::FeeModel, max_cost::Float64, price
         fee = calculate_fee(fee_model, quantity, price)
     end
     return quantity
-end
-
-function _calculate_asset_quantity(
-    fee_model::ZeroFeeModel, max_cost::Float64, price::Float64
-)
-    return Int(floor(max_cost / price))
 end
