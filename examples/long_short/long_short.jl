@@ -1,4 +1,4 @@
-# https://github.com/mhallsmoore/qstrader/blob/master/examples/sixty_forty.py
+# https://github.com/mhallsmoore/qstrader/blob/master/examples/long_short.py
 using SaguaroTrader
 using SaguaroTraderResults
 using CSV
@@ -9,7 +9,7 @@ using Plots
 include("data.jl")
 
 start_dt = DateTime(2007, 1, 31)
-end_dt = DateTime(2020, 5, 1)
+end_dt = DateTime(2023, 5, 1)
 initial_cash = 100_000.0
 
 # Download market data for SPY, AGG
@@ -65,11 +65,6 @@ run!(strategy_trading_session)
 # Configure portfolio
 portfolio_id = "spy_benchmark"
 create_portfolio!(broker, initial_cash; portfolio_id=portfolio_id)
-
-# Download market data for SPY
-if !isfile("./temp/SPY.csv")
-    download_market_data([:SPY]; start_dt=DateTime(2007, 1, 30))
-end
 
 assets = [Equity(:SPY)]
 universe = StaticUniverse(assets)

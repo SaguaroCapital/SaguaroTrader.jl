@@ -26,7 +26,7 @@ function (order_sizer::LongShortOrderSizer)(
         return Dict{Asset,Int}()
     end
 
-    normalized_weights = _normalize_weights_long_short(weights, order_sizer.gross_leverage)
+    normalized_weights = _normalize_weights(weights, true, order_sizer.gross_leverage)
     target_portfolio = Dict{Asset,Int}()
     for (asset, weight) in normalized_weights
         dollar_weight = portfolio_equity * weight

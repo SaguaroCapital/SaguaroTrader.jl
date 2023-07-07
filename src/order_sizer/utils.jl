@@ -1,42 +1,25 @@
-
-function _normalize_weights(weights::Dict)
+function _normalize_weights(weights::Dict, allow_negative::Bool=false, gross_leverage::Float64=1.0)
     weight_sum = 0.0
     for (asset, weight) in weights
-        if weight < 0.0
+        if !allow_negative && weight < 0.0
             error("$asset => $weight weight is below 0.")
         end
-        weight_sum += weight
+        weight_sum += allow_negative ? abs(weight) : weight
     end
 
     if weight_sum == 0
         return weights
     else
+        ratio = allow_negative ? gross_leverage / weight_sum : 1.0 / weight_sum
+
         normalized_weights = copy(weights)
         for asset in keys(normalized_weights)
-            normalized_weights[asset] /= weight_sum
+            normalized_weights[asset] *= ratio
         end
         return normalized_weights
     end
 end
 
-function _normalize_weights_long_short(weights::Dict, gross_leverage::Float64=1.0)
-    weight_sum = 0.0
-    for (asset, weight) in weights
-        weight_sum += abs(weight)
-    end
-
-    if weight_sum == 0
-        return weights
-    else
-        gross_ratio = gross_leverage / weight_sum
-
-        normalized_weights = copy(weights)
-        for asset in keys(normalized_weights)
-            normalized_weights[asset] *= gross_ratio
-        end
-        return normalized_weights
-    end
-end
 
 """
 Using the max amount that we are willing to pay for an equity, 
