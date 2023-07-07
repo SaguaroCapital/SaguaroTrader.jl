@@ -40,7 +40,7 @@ signal_weights = Dict(Equity(:SPY) => 1.0, Equity(:AGG) => -0.7)
 alpha_model = FixedSignalsAlphaModel(signal_weights)
 
 # Configure portfolio
-portfolio_id = "sixty_forty"
+portfolio_id = "long_short"
 create_portfolio!(broker, initial_cash; portfolio_id=portfolio_id)
 order_sizer = LongShortOrderSizer(5.0)
 rebalance = BuyAndHoldRebalance(Date(start_dt))
