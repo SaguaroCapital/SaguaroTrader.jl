@@ -1,4 +1,3 @@
-
 """
 Create target portfolio quantities using the total equity
 available to the order sizer.
@@ -21,12 +20,17 @@ function (order_sizer::LongShortOrderSizer)(
     broker::Broker, portfolio_id::String, weights::Dict, dt::DateTime
 )
     portfolio_equity = total_equity(broker.portfolios[portfolio_id])
+
+    # no weights
+    if length(weights) == 0
+        return Dict{Asset,Int}()
+    end
+
     normalized_weights = _normalize_weights(weights)
     target_portfolio = Dict{Asset,Int}()
     for (asset, weight) in normalized_weights
-        weight = normalized_weights[asset]
+        dollar_weight = portfolio_equity * order_sizer.gross_leverage * weight
         price = get_asset_latest_ask_price(broker.data_handler, dt, asset.symbol)
-        dollar_weight = portfolio_equity * weight * order_sizer.gross_leverage
         asset_quantity = _calculate_asset_quantity(broker.fee_model, dollar_weight, price)
         target_portfolio[asset] = asset_quantity
     end

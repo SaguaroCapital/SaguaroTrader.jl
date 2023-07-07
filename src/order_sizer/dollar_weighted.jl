@@ -35,11 +35,17 @@ function (order_sizer::DollarWeightedOrderSizer)(
         return Dict{Asset,Int}()
     end
 
+    for (asset, weight) in weights
+        if weight < 0.0
+            error("$asset => $weight weight is below 0.")
+        end
+    end
+    
     normalized_weights = _normalize_weights(weights)
     target_portfolio = Dict{Asset,Int}()
     for (asset, weight) in normalized_weights
-        price = get_asset_latest_ask_price(broker.data_handler, dt, asset.symbol)
         dollar_weight = cash_buffered_total_equity * weight
+        price = get_asset_latest_ask_price(broker.data_handler, dt, asset.symbol)
         asset_quantity = _calculate_asset_quantity(broker.fee_model, dollar_weight, price)
         target_portfolio[asset] = asset_quantity
     end

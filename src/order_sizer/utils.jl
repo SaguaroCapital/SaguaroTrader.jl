@@ -1,11 +1,7 @@
-
 function _normalize_weights(weights::Dict)
     weight_sum = 0.0
     for (asset, weight) in weights
-        if weight < 0.0
-            error("$asset => $weight weight is below 0.")
-        end
-        weight_sum += weight
+        weight_sum += abs(weight)
     end
 
     if weight_sum == 0
@@ -18,6 +14,8 @@ function _normalize_weights(weights::Dict)
         return normalized_weights
     end
 end
+
+
 
 """
 Using the max amount that we are willing to pay for an equity, 
@@ -33,10 +31,4 @@ function _calculate_asset_quantity(fee_model::FeeModel, max_cost::Float64, price
         fee = calculate_fee(fee_model, quantity, price)
     end
     return quantity
-end
-
-function _calculate_asset_quantity(
-    fee_model::ZeroFeeModel, max_cost::Float64, price::Float64
-)
-    return Int(floor(max_cost / price))
 end
