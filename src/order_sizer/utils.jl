@@ -1,24 +1,22 @@
-function _normalize_weights(weights::Dict, allow_negative::Bool=false, gross_leverage::Float64=1.0)
+function _normalize_weights(weights::Dict, gross_leverage::Float64=1.0)
     weight_sum = 0.0
     for (asset, weight) in weights
-        if !allow_negative && weight < 0.0
-            error("$asset => $weight weight is below 0.")
-        end
-        weight_sum += allow_negative ? abs(weight) : weight
+        weight_sum += abs(weight)
     end
 
     if weight_sum == 0
         return weights
     else
-        ratio = allow_negative ? gross_leverage / weight_sum : 1.0 / weight_sum
+        gross_ratio = gross_leverage / weight_sum
 
         normalized_weights = copy(weights)
         for asset in keys(normalized_weights)
-            normalized_weights[asset] *= ratio
+            normalized_weights[asset] *= gross_ratio
         end
         return normalized_weights
     end
 end
+
 
 
 """
