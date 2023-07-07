@@ -35,6 +35,12 @@ function (order_sizer::DollarWeightedOrderSizer)(
         return Dict{Asset,Int}()
     end
 
+    for (asset, weight) in weights
+        if weight < 0.0
+            error("$asset => $weight weight is below 0.")
+        end
+    end
+    
     normalized_weights = _normalize_weights(weights)
     target_portfolio = Dict{Asset,Int}()
     for (asset, weight) in normalized_weights

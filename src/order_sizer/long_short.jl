@@ -26,10 +26,10 @@ function (order_sizer::LongShortOrderSizer)(
         return Dict{Asset,Int}()
     end
 
-    normalized_weights = _normalize_weights(weights, order_sizer.gross_leverage)
+    normalized_weights = _normalize_weights(weights)
     target_portfolio = Dict{Asset,Int}()
     for (asset, weight) in normalized_weights
-        dollar_weight = portfolio_equity * weight
+        dollar_weight = portfolio_equity * order_sizer.gross_leverage * weight
         price = get_asset_latest_ask_price(broker.data_handler, dt, asset.symbol)
         asset_quantity = _calculate_asset_quantity(broker.fee_model, dollar_weight, price)
         target_portfolio[asset] = asset_quantity

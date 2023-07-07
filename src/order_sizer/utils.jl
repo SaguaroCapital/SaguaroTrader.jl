@@ -1,4 +1,4 @@
-function _normalize_weights(weights::Dict, gross_leverage::Float64=1.0)
+function _normalize_weights(weights::Dict)
     weight_sum = 0.0
     for (asset, weight) in weights
         weight_sum += abs(weight)
@@ -7,11 +7,9 @@ function _normalize_weights(weights::Dict, gross_leverage::Float64=1.0)
     if weight_sum == 0
         return weights
     else
-        gross_ratio = gross_leverage / weight_sum
-
         normalized_weights = copy(weights)
         for asset in keys(normalized_weights)
-            normalized_weights[asset] *= gross_ratio
+            normalized_weights[asset] /= weight_sum
         end
         return normalized_weights
     end
