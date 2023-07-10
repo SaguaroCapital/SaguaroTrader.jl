@@ -246,7 +246,7 @@ function get_bid(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
     df_bid_ask = ds.dict_asset_dfs[asset]
     ix = searchsortedfirst(df_bid_ask.timestamp::Vector{DateTime}, dt)::Int64
     if (ix == 1) || (ix > size(df_bid_ask, 1))
-        return NaN
+        throw(DomainError(x, "Invalid Timestamp"))
     else
         return @inbounds df_bid_ask[ix, :Bid]::Float64
     end
@@ -256,7 +256,7 @@ function get_ask(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
     df_bid_ask = ds.dict_asset_dfs[asset]
     ix = searchsortedfirst(df_bid_ask.timestamp::Vector{DateTime}, dt)::Int64
     if (ix == 1) || (ix > size(df_bid_ask, 1))
-        return NaN
+        throw(DomainError(x, "Invalid Timestamp"))
     else
         return @inbounds df_bid_ask[ix, :Ask]::Float64
     end
