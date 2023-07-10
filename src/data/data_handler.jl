@@ -55,7 +55,7 @@ function get_asset_latest_bid_price(dh::DataHandler, dt::DateTime, asset::Symbol
             continue
         end
     end
-    return bid
+    throw(DomainError(dt, "Unable to Get Asset Bid Price for $asset at $dt. Check Data Source Start/End Time."))
 end
 
 function get_asset_latest_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol)
@@ -70,7 +70,7 @@ function get_asset_latest_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol
             continue
         end
     end
-    return bid
+    throw(DomainError(dt, "Unable to Get Asset Ask Price for $asset at $dt. Check Data Source Start/End Time."))
 end
 
 function get_asset_latest_volume(dh::DataHandler, dt::DateTime, asset::Symbol)
