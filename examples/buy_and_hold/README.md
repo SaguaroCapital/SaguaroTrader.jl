@@ -1,5 +1,5 @@
-# Example backtest with long and short positions
+# Example backtest with buy and hold GLD
 
 ```
-julia --project ./long_short.jl
+julia --project ./buy_and_hold.jl
 ```
