@@ -55,22 +55,22 @@ function get_asset_latest_bid_price(dh::DataHandler, dt::DateTime, asset::Symbol
             continue
         end
     end
-    throw(DomainError(dt, "Unable to Get Asset Bid Price for $asset at $dt. Check Data Source Start/End Time."))
+    return bid
 end
 
 function get_asset_latest_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol)
-    bid = float(NaN)
+    ask = float(NaN)
     for ds in dh.data_sources
         try
-            bid = get_ask(ds, dt, asset)
-            if !isnan(bid)
-                return bid
+            ask = get_ask(ds, dt, asset)
+            if !isnan(ask)
+                return ask
             end
         catch
             continue
         end
     end
-    throw(DomainError(dt, "Unable to Get Asset Ask Price for $asset at $dt. Check Data Source Start/End Time."))
+    return ask
 end
 
 function get_asset_latest_volume(dh::DataHandler, dt::DateTime, asset::Symbol)
