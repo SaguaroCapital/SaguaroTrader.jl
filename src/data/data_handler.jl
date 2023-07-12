@@ -59,18 +59,18 @@ function get_asset_latest_bid_price(dh::DataHandler, dt::DateTime, asset::Symbol
 end
 
 function get_asset_latest_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol)
-    bid = float(NaN)
+    ask = float(NaN)
     for ds in dh.data_sources
         try
-            bid = get_ask(ds, dt, asset)
-            if !isnan(bid)
-                return bid
+            ask = get_ask(ds, dt, asset)
+            if !isnan(ask)
+                return ask
             end
         catch
             continue
         end
     end
-    return bid
+    return ask
 end
 
 function get_asset_latest_volume(dh::DataHandler, dt::DateTime, asset::Symbol)
