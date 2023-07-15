@@ -1,23 +1,7 @@
+module MarketDataExt
 
-"""
-```julia
-download_market_data(
-    securities::Vector{Symbol},
-    data_dir::String = "./temp/";
-    start_dt::DateTime = DateTime(1990, 1, 1),
-    end_dt::DateTime = DateTime(2040, 1, 1),
-)
-```
+using SaguaroTrader, MarketData
 
-Download market data using MarketData.jl
-
-Parameters
------------
-= `securities::Vector{Symbol}`
-= `data_dir::String = "./temp/"`
-= `start_dt::DateTime = DateTime(1990, 1, 1)`
-= `end_dt::DateTime = DateTime(2040, 1, 1)`
-"""
 function download_market_data(
     securities::Vector{Symbol},
     data_dir::String="./temp/";
@@ -33,3 +17,5 @@ function download_market_data(
     end
     return nothing
 end
+
+end # module

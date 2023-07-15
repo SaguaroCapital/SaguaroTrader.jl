@@ -28,3 +28,9 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Aqua", "Test"]
+
+[weakdeps]
+MarketData = "945b72a4-3b13-509d-9b46-1525bb5c06de"
+
+[extensions]
+MarketDataExt = "MarketData"

@@ -6,8 +6,6 @@ using DataFrames
 using MarketData
 using Plots
 
-include("data.jl")
-
 start_dt = DateTime(2005, 1, 1)
 end_dt = DateTime(2022, 9, 1)
 initial_cash = 100_000.0
