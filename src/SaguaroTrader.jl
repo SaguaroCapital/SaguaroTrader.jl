@@ -32,6 +32,10 @@ include("ext.jl")
 
 include("precompile.jl")
 
+if !isdefined(Base, :get_extension)
+    include("../ext/MarketDataExt.jl")
+end
+
 export
 
     # asset
