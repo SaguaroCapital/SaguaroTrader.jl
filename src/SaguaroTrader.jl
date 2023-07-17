@@ -28,7 +28,13 @@ include("execution/execution.jl")
 include("portfolio_construction_model/portfolio_construction_model.jl")
 include("backtest_trading_session/backtest_trading_session.jl")
 
+include("ext.jl")
+
 include("precompile.jl")
+
+if !isdefined(Base, :get_extension)
+    include("../ext/MarketDataExt.jl")
+end
 
 export
 
@@ -126,6 +132,9 @@ export
 
     # Trading
     BacktestTradingSession,
-    run!
+    run!,
+
+    #ext
+    download_market_data
 
 end

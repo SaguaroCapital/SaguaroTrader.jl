@@ -1,15 +1,14 @@
 # https://github.com/mhallsmoore/qstrader/blob/master/examples/sixty_forty.py
-using SaguaroTrader
-using SaguaroTraderResults
 using CSV
 using DataFrames
+using Dates
 using MarketData
 using Plots
-
-include("data.jl")
+using SaguaroTrader
+using SaguaroTraderResults
 
 start_dt = DateTime(2005, 1, 1)
-end_dt = DateTime(2022, 9, 1)
+end_dt = DateTime(2023, 7, 1)
 initial_cash = 100_000.0
 
 # Download market data for SPY, AGG
@@ -94,4 +93,4 @@ plt_tearsheet = SaguaroTraderResults.plot_tearsheet(
     benchmark_trading_session;
     title="60/40 Backtest Results vs S&P 500",
 )
-savefig(plt_tearsheet, "./tearsheet.png")
+savefig(plt_tearsheet, "./sixty_forty.png")

@@ -1,12 +1,11 @@
 # https://github.com/mhallsmoore/qstrader/blob/master/examples/buy_and_hold.py
-using SaguaroTrader
-using SaguaroTraderResults
 using CSV
 using DataFrames
+using Dates
 using MarketData
 using Plots
-
-include("data.jl")
+using SaguaroTrader
+using SaguaroTraderResults
 
 start_dt = DateTime(2007, 1, 31)
 end_dt = DateTime(2023, 5, 1)
@@ -110,4 +109,4 @@ plt_tearsheet = SaguaroTraderResults.plot_tearsheet(
     benchmark_trading_session;
     title="Buy and Hold GLD vs SPY Benchmark",
 )
-savefig(plt_tearsheet, "./tearsheet.png")
+savefig(plt_tearsheet, "./buy_and_hold.png")
