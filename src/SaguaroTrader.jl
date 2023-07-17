@@ -128,6 +128,9 @@ export
 
     # Trading
     BacktestTradingSession,
-    run!
+    run!,
+
+    #ext
+    download_market_data
 
 end
