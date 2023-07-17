@@ -3,6 +3,7 @@ using Aqua
 using CSV
 using DataFrames
 using Dates
+using MarketData
 using SaguaroTrader
 using Test
 

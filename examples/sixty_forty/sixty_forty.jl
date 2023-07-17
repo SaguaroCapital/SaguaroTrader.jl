@@ -3,16 +3,16 @@ using SaguaroTrader
 using SaguaroTraderResults
 using CSV
 using DataFrames
-using MarketData
+using Dates
 using Plots
 
 start_dt = DateTime(2005, 1, 1)
-end_dt = DateTime(2022, 9, 1)
+end_dt = DateTime(2023, 7, 1)
 initial_cash = 100_000.0
 
 # Download market data for SPY, AGG
 if !isfile("./temp/AGG.csv") & !isfile("./temp/SPY.csv")
-    download_market_data([:SPY, :AGG]; start_dt=DateTime(2004, 12, 25))
+    SaguaroTrader.download_market_data([:SPY, :AGG]; start_dt=DateTime(2004, 12, 25))
 end
 
 #####################################################
