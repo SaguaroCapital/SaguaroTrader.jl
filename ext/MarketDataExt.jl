@@ -16,8 +16,13 @@ function SaguaroTrader.download_market_data(
 )
     if check_exists
         if isfile(joinpath(data_dir, "$security.csv"))
+<<<<<<< HEAD
             df = CSV.read(joinpath(data_dir, "$security.csv"))
             if start_dt >= first(df[:Date]) && end_dt <= last(df[:Date])
+=======
+            df = CSV.read(joinpath(data_dir, "$security.csv"), DataFrame)
+            if start_dt >= first(df[!, :timestamp]) && end_dt <= last(df[!, :timestamp])
+>>>>>>> 0227dac (Add the ability to check for existing data)
                 return nothing
             end
         end
@@ -44,8 +49,13 @@ function SaguaroTrader.download_market_data(
     for security in securities
         if check_exists
             if isfile(joinpath(data_dir, "$security.csv"))
+<<<<<<< HEAD
                 df = CSV.read(joinpath(data_dir, "$security.csv"))
                 if start_dt >= first(df[:Date]) && end_dt <= last(df[:Date])
+=======
+                df = CSV.read(joinpath(data_dir, "$security.csv"), DataFrame)
+                if start_dt >= first(df[!, :timestamp]) && end_dt <= last(df[!, :timestamp])
+>>>>>>> 0227dac (Add the ability to check for existing data)
                     continue
                 end
             end
