@@ -20,7 +20,7 @@ end
 # Prepare broker
 ######################################################
 # configure data source, portfolio optimizer
-data_source = CSVDailyBarSource("./temp/", csv_symbols=[Symbol(:SPY), Symbol(:AGG)])
+data_source = CSVDailyBarSource("./temp/"; csv_symbols=[Symbol(:SPY), Symbol(:AGG)])
 data_handler = BacktestDataHandler([data_source])
 port_optimizer = FixedWeightPortfolioOptimizer(data_handler)
 
@@ -68,7 +68,7 @@ create_portfolio!(broker, initial_cash; portfolio_id=portfolio_id)
 assets = [Equity(:SPY)]
 universe = StaticUniverse(assets)
 
-data_source = CSVDailyBarSource("./temp/", csv_symbols=[Symbol(:SPY)])
+data_source = CSVDailyBarSource("./temp/"; csv_symbols=[Symbol(:SPY)])
 data_handler = BacktestDataHandler([data_source])
 port_optimizer = FixedWeightPortfolioOptimizer(data_handler)
 
@@ -96,8 +96,6 @@ run!(benchmark_trading_session)
 # Plot results
 ######################################################
 plt_tearsheet = SaguaroTraderResults.plot_tearsheet(
-    strategy_trading_session,
-    benchmark_trading_session;
-    title="Long/Short ETFs",
+    strategy_trading_session, benchmark_trading_session; title="Long/Short ETFs"
 )
 savefig(plt_tearsheet, "./long_short.png")

@@ -1,5 +1,4 @@
 
-
 function download_market_data(args...; kwargs...)
     error_msg = """
     MarketData.jl is not installed in the current environment.

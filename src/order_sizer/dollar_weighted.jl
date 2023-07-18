@@ -40,17 +40,19 @@ function (order_sizer::DollarWeightedOrderSizer)(
             error("$asset => $weight weight is below 0.")
         end
     end
-    
+
     normalized_weights = _normalize_weights(weights)
     target_portfolio = Dict{Asset,Int}()
     for (asset, weight) in normalized_weights
         dollar_weight = cash_buffered_total_equity * weight
         price = get_asset_latest_ask_price(broker.data_handler, dt, asset.symbol)
         if isnan(price)
-            @warn  "Unable to get price of asset $asset at $dt. Setting quantity to 0."
+            @warn "Unable to get price of asset $asset at $dt. Setting quantity to 0."
             asset_quantity = 0
         else
-            asset_quantity = _calculate_asset_quantity(broker.fee_model, dollar_weight, price)
+            asset_quantity = _calculate_asset_quantity(
+                broker.fee_model, dollar_weight, price
+            )
         end
         target_portfolio[asset] = asset_quantity
     end

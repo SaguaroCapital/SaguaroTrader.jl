@@ -15,8 +15,6 @@ function _normalize_weights(weights::Dict)
     end
 end
 
-
-
 """
 Using the max amount that we are willing to pay for an equity, 
 calculate the quantity that we should buy to get as close

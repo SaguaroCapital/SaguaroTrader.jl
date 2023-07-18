@@ -20,7 +20,7 @@ end
 # Prepare broker
 ######################################################
 # configure data source, portfolio optimizer
-data_source = CSVDailyBarSource("./temp/", csv_symbols=[Symbol(:GLD)])
+data_source = CSVDailyBarSource("./temp/"; csv_symbols=[Symbol(:GLD)])
 
 data_handler = BacktestDataHandler([data_source])
 port_optimizer = FixedWeightPortfolioOptimizer(data_handler)
@@ -68,7 +68,7 @@ if !isfile("./temp/SPY.csv")
     download_market_data([:SPY]; start_dt=DateTime(2006, 12, 25))
 end
 
-data_source = CSVDailyBarSource("./temp/", csv_symbols=[Symbol(:SPY)])
+data_source = CSVDailyBarSource("./temp/"; csv_symbols=[Symbol(:SPY)])
 
 data_handler = BacktestDataHandler([data_source])
 port_optimizer = FixedWeightPortfolioOptimizer(data_handler)
