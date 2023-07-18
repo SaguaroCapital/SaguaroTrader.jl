@@ -18,7 +18,7 @@ download_market_data([:GLD, :SPY]; start_dt=DateTime(2006, 12, 26), end_dt=DateT
 # Prepare broker
 ######################################################
 # configure data source, portfolio optimizer
-data_source = CSVDailyBarSource("./temp/", csv_symbols=[Symbol(:GLD)])
+data_source = CSVDailyBarSource("./temp/"; csv_symbols=[Symbol(:GLD)])
 
 data_handler = BacktestDataHandler([data_source])
 port_optimizer = FixedWeightPortfolioOptimizer(data_handler)
@@ -65,7 +65,7 @@ run!(strategy_trading_session)
 
 download_market_data(:SPY; start_dt=DateTime(2006, 12, 26), end_dt=DateTime(2023, 4, 27), check_exists=true)
 
-data_source = CSVDailyBarSource("./temp/", csv_symbols=[Symbol(:SPY)])
+data_source = CSVDailyBarSource("./temp/"; csv_symbols=[Symbol(:SPY)])
 
 data_handler = BacktestDataHandler([data_source])
 port_optimizer = FixedWeightPortfolioOptimizer(data_handler)
