@@ -7,7 +7,7 @@
 [![Coverage](http://codecov.io/github/SaguaroCapital/SaguaroTrader.jl/coverage.svg?branch=main)](https://codecov.io/gh/SaguaroCapital/SaguaroTrader.jl)
 [![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://saguarocapital.github.io/SaguaroTrader.jl)
 
-SaguaroTrader.jl is a modular schedule-driven backtesting library for long-short equities and ETF based systematic trading strategies. This library originated as a Julia port of the Python library [qstrader](https://github.com/mhallsmoore/qstrader).
+SaguaroTrader.jl is a flexible, schedule-driven backtesting library tailored for long-short equity and ETF-based systematic trading strategies. Signal generation operates independently from portfolio construction, risk management, execution, and simulated brokerage accounting. This library originated as a Julia port of the Python library [qstrader](https://github.com/mhallsmoore/qstrader).
 
 ## Installation
 
