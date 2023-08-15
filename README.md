@@ -35,4 +35,4 @@ Pkg> add https://github.com/SaguaroCapital/SaguaroTrader.jl/
 
 - [Bruno.jl](https://github.com/USU-Analytics-Solution-Center/Bruno.jl) - A modular, flexible package for simulating financial data, asset pricing, and trading strategy testing.
 - [PingPong.jl](https://github.com/panifie/PingPong.jl) - Cryptocurrency trading bot, and backtesting framework.
-- [Trading.jl](https://github.com/louisponet/Trading.jl) - A framework for defining and executing and backtesting trading strategies based on technical indicators.
+- [Trading.jl](https://github.com/louisponet/Trading.jl) - An event-driven framework for defining and executing and backtesting trading strategies based on technical indicators.
