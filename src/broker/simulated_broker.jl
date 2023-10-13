@@ -11,7 +11,7 @@ Fields
 - `account_id::String`
 - `base_currency::String`
 - `initial_cash::Float64`
-- `fee_model::FeeModel`
+- `fee_model`
 - `cash_balances::Dict{String,Float64}`
 - `portfolios::Dict{String,Portfolio}`
 - `open_orders::Dict{String,Queue{Order}}`
@@ -24,7 +24,7 @@ mutable struct SimulatedBroker <: Broker
     account_id::String
     base_currency::String
     initial_cash::Float64
-    fee_model::FeeModel
+    fee_model
     slippage_model::SlippageModel
     # market_impact_model::AbstractMarketImpactModel # TODO: Implement
     cash_balances::Dict{String,Float64}
@@ -38,7 +38,7 @@ mutable struct SimulatedBroker <: Broker
         account_id::String="",
         base_currency::String="USD",
         initial_cash::Float64=0.0,
-        fee_model::FeeModel=ZeroFeeModel(),
+        fee_model=ZeroFeeModel(),
         slippage_model::SlippageModel=ZeroSlippageModel(),
     )
         @assert initial_cash >= 0.0 "initial cash must be >= 0"

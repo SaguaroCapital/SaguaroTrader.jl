@@ -21,7 +21,7 @@ calculate the quantity that we should buy to get as close
 as possible without going over.
 
 """
-function _calculate_asset_quantity(fee_model::FeeModel, max_cost::Float64, price::Float64)
+function _calculate_asset_quantity(fee_model, max_cost::Float64, price::Float64)
     quantity = Int(floor(max_cost / price))
     fee = calculate_fee(fee_model, quantity, price)
     while (quantity * price + fee) > max_cost
