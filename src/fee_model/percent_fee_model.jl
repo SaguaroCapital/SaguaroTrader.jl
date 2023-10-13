@@ -12,7 +12,7 @@ Fields
 - `fee_pct::Float64` = 0.0
 - `tax_pct::Float64` = 0.0
 """
-struct PercentFeeModel <: FeeModel
+struct PercentFeeModel
     fee_pct::Float64
     tax_pct::Float64
     function PercentFeeModel(; fee_pct::Float64=0.0, tax_pct::Float64=0.0)

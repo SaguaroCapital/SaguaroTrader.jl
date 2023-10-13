@@ -55,7 +55,6 @@ export
     AlwaysOpenExchange,
 
     # fee model
-    FeeModel,
     ZeroFeeModel,
     PercentFeeModel,
     calculate_fee,
