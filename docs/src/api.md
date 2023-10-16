@@ -107,6 +107,7 @@ VolumeSharesSlippageModel
 
 # Broker
 ```@docs
+Broker
 SimulatedBroker
 create_portfolio!
 subscribe_funds!

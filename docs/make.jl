@@ -14,6 +14,7 @@ makedocs(;
         assets=String[],
     ),
     pages=["Home" => "index.md", "API" => "api.md", "Examples" => "examples.md"],
+    warnonly = true
 )
 
-deploydocs(; repo="github.com/SaguaroCapital/SaguaroTrader.jl.git")
+# deploydocs(; repo="github.com/SaguaroCapital/SaguaroTrader.jl.git")
