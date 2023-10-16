@@ -5,14 +5,14 @@ Abstract type for asset universes
 abstract type Universe end
 
 """
-Satatic asset universe
+Static asset universe
 
 Parameters
 ----------
-- `asset_dates::Vector{Dict{Symbol,DateTime}}`
+- `assets`
 """
 struct StaticUniverse <: Universe
-    assets::Vector{Asset}
+    assets
 end
 
 """

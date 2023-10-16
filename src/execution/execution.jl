@@ -28,11 +28,11 @@ struct ExecutionHandler
     end
 end
 
-function execute(exec_handler::ExecutionHandler, rebalance_orders::Vector{Order})
+function execute(exec_handler::ExecutionHandler, rebalance_orders)
     return execute(exec_handler.execution_algorithm, rebalance_orders)
 end
 
-function (exec_handler::ExecutionHandler)(rebalance_orders::Vector{Order})
+function (exec_handler::ExecutionHandler)(rebalance_orders)
     if exec_handler.submit_orders
         final_orders = execute(exec_handler, rebalance_orders)
         sell_orders = [order for order in final_orders if order.direction < 0]

@@ -33,7 +33,7 @@ struct BacktestTradingSession
         order_sizer,
         portfolio_optimizer;
         # risk_model, #TODO: Implement
-        # signals::Vector{Signals}, #TODO: Implement
+        # signals, #TODO: Implement
         start_tracking_dt::Union{Nothing,DateTime}=nothing,
     )
         @assert portfolio_id in keys(broker.portfolios) "`portfolio_id` not found ($portfolio_id)"

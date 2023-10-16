@@ -4,11 +4,11 @@
 Data Handler for backtesting
 Fields
 ------
-- `data_sources::Vector{DataSource}`
+- `data_sources
 """
 struct BacktestDataHandler <: DataHandler
-    data_sources::Vector{DataSource}
-    function BacktestDataHandler(data_sources::Vector)
+    data_sources
+    function BacktestDataHandler(data_sources)
         _verify_unique_assets(data_sources)
         return new(data_sources)
     end
@@ -20,7 +20,7 @@ we use the first one we find for the asset,
 so this assumes that each asset is only present 
 in one data source.
 """
-function _verify_unique_assets(data_sources::Vector)
+function _verify_unique_assets(data_sources)
     n_data_sources = size(data_sources, 1)
     if n_data_sources == 1
         return nothing

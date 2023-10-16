@@ -64,9 +64,9 @@ function _create_rebalance_orders(
             rebalance_orders_dict[asset] = Order(dt, target_quantity, asset)
         end
     end
-    buy_orders = Vector{Order}([i[2] for i in rebalance_orders_dict if i[2].direction > 0])
-    sell_orders = Vector{Order}([i[2] for i in rebalance_orders_dict if i[2].direction < 0])
-    return Vector{Order}([sell_orders..., buy_orders...])
+    buy_orders = [i[2] for i in rebalance_orders_dict if i[2].direction > 0]
+    sell_orders = [i[2] for i in rebalance_orders_dict if i[2].direction < 0]
+    return [sell_orders..., buy_orders...]
 end
 
 """
