@@ -39,6 +39,7 @@ AlwaysOpenExchange
 
 # Fee Model
 ```@docs
+FeeModel
 ZeroFeeModel
 PercentFeeModel
 calculate_fee
