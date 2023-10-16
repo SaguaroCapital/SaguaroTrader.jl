@@ -35,21 +35,21 @@ end
 
 """
 ```julia
-equal_orders(ord1::Order, ord2::Order)
+equal_orders(ord1, ord2)
 ```
 
 Assert if two orders are the same (other than the id)
 
 Parameters
 ----------
-- `ord1::Order`
-- `ord2::Order`
+- `ord1`
+- `ord2`
 
 Returns
 -------
 - `Bool`: true if two orders are the same (other than the id)
 """
-function equal_orders(ord1::Order, ord2::Order)
+function equal_orders(ord1, ord2)
     if ord1.created_dt != ord2.created_dt
         return false
     elseif ord1.quantity != ord2.quantity

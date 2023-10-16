@@ -3,19 +3,19 @@
 
 """
 struct QuantTradingSystem
-    universe::Universe
-    broker::Broker
+    universe
+    broker
     portfolio_id::String
-    alpha_model::AlphaModel
-    order_sizer::OrderSizer
-    # risk_model::RiskModel #TODO: Implement
+    alpha_model
+    order_sizer
+    # risk_model #TODO: Implement
     long_only::Bool
     submit_orders::Bool
     function QuantTradingSystem(
-        universe::Universe,
-        broker::Broker,
+        universe,
+        broker,
         portfolio_id::String,
-        alpha_model::AlphaModel;
+        alpha_model;
         long_only::Bool=false,
         cash_buffer_percentage::Float64=0.05,
         gross_leverage::Float64=1.0,

@@ -12,21 +12,21 @@ The execution algorithm returns the vector of orders
 """
 struct MarketOrderExecutionAlgorithm <: ExecutionAlgorithm end
 
-function execute(algo::MarketOrderExecutionAlgorithm, rebalance_orders::Vector{Order})
+function execute(algo::MarketOrderExecutionAlgorithm, rebalance_orders)
     return rebalance_orders
 end
 
 """
 ```julia
-execute(algo::ExecutionAlgorithm, ord::Vector{Order})
+execute(algo, rebalance_orders)
 ```
 
-Execute algorithm to get rebalanced portfolio
+Execution algorithm to get rebalanced portfolio
 
 Parameters
 ----------
-- `algo::ExecutionAlgorithm`
-- `ord::Vector{Order}`
+- `algo`
+- `rebalance_orders`
 
 Returns
 -------

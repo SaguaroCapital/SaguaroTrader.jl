@@ -55,7 +55,7 @@ end
 
 """
 ```julia
-is_open(exc::Exchange, dt::DateTime)
+is_open(exc, dt::DateTime)
 ```
 
 Simulated Exchange:

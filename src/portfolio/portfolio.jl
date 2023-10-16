@@ -57,8 +57,8 @@ Total market value of the portfolio excluding cash.
 
 Parameters
 ----------
-- `ord1::Order`
-- `ord2::Order`
+- `ord1`
+- `ord2`
 
 Returns
 -------
@@ -77,8 +77,8 @@ Total market value of the portfolio including cash.
 
 Parameters
 ----------
-- `ord1::Order`
-- `ord2::Order`
+- `ord1`
+- `ord2`
 
 Returns
 -------
