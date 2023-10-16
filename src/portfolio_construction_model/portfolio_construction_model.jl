@@ -5,32 +5,32 @@ target portfolio weights
 
 Fields
 ------
-- `broker::Broker`
+- `broker`
 - `portfolio_id::String`
-- `universe::Universe`
-- `order_sizer::OrderSizer`
-- `portfolio_optimizer::PortfolioOptimizer`
-- `alpha_model::AlphaModel`
+- `universe`
+- `order_sizer`
+- `portfolio_optimizer`
+- `alpha_model`
 """
 struct PortfolioConstructionModel
-    broker::Broker
+    broker
     portfolio_id::String
-    universe::Universe
-    order_sizer::OrderSizer
-    portfolio_optimizer::PortfolioOptimizer
-    alpha_model::AlphaModel
+    universe
+    order_sizer
+    portfolio_optimizer
+    alpha_model
     #TODO: add risk/cost models
-    # risk_model::RiskModel
+    # risk_model
     # cost_model::CostModel
 end
 
-function _get_assets(pcm::PortfolioConstructionModel)
+function _get_assets(pcm)
     uni_assets = _get_assets(pcm.universe)
     port_assets = _get_assets(pcm.broker.portfolios[pcm.portfolio_id])
     return unique([uni_assets..., port_assets...])
 end
 
-function _get_current_positions(pcm::PortfolioConstructionModel)
+function _get_current_positions(pcm)
     return pcm.broker.portfolios[pcm.portfolio_id].pos_handler.positions
 end
 
@@ -71,21 +71,21 @@ end
 
 """
 ```julia
-_create_rebalance_orders(pcm::PortfolioConstructionModel, dt::DateTime)
+_create_rebalance_orders(pcm, dt::DateTime)
 ```
 
 Create rebalance orders to create the target portfolio
 
 Parameters
 ----------
-- `pcm::PortfolioConstructionModel`
+- `pcm`
 - `dt::DateTime`
 
 Returns
 -------
 - `Dict{Asset, Int}`: Rebalance orders
 """
-function _create_rebalance_orders(pcm::PortfolioConstructionModel, dt::DateTime)
+function _create_rebalance_orders(pcm, dt::DateTime)
     weights = pcm.alpha_model(dt)
     target_positions = pcm.order_sizer(pcm.broker, pcm.portfolio_id, weights, dt)
     current_positions = _get_current_positions(pcm)

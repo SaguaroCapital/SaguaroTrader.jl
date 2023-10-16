@@ -5,7 +5,7 @@ available to the order sizer.
 
 Fields
 ------
-- `broker::Broker`
+- `broker`
 - `portfolio_id::String`
 - `cash_buffer_percentage::Float64=0.05`
 """
@@ -24,7 +24,7 @@ provided target weights at a particular timestamp.
 #TODO: Work with short positions
 """
 function (order_sizer::DollarWeightedOrderSizer)(
-    broker::Broker, portfolio_id::String, weights::Dict, dt::DateTime
+    broker, portfolio_id::String, weights::Dict, dt::DateTime
 )
     portfolio_equity = total_equity(broker.portfolios[portfolio_id])
     cash_buffered_total_equity =

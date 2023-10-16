@@ -4,11 +4,11 @@ Fixed signal for all assets in the universe
 
 Fields
 ------
-- `universe::Universe`
+- `universe`
 - `signal::Float64`
 """
 struct SingleSignalAlphaModel <: AlphaModel
-    universe::Universe
+    universe
     signal::Float64
 end
 

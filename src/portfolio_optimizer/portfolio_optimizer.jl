@@ -2,7 +2,7 @@
 """
 Abstract type for portfolio optimization.
 ```julia
-generate_weights(opt::PortfolioOptimizer, initial_weights)
+generate_weights(opt, initial_weights)
 ```
 """
 abstract type PortfolioOptimizer end
@@ -56,14 +56,14 @@ end
 
 """
 ```julia
-generate_weights(opt::PortfolioOptimizer, initial_weights)
+generate_weights(opt, initial_weights)
 ```
 
 Generate portfolio weights
 
 Parameters
 ----------
-- `opt::PortfolioOptimizer`
+- `opt`
 - `initial_weights::Dict{Symbol}`
 
 Returns

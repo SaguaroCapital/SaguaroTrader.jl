@@ -4,7 +4,7 @@ available to the order sizer.
 
 Fields
 ------
-- `broker::Broker`
+- `broker`
 - `portfolio_id::String`
 - `gross_leverage::Float64=1.0`
 """
@@ -17,7 +17,7 @@ struct LongShortOrderSizer <: OrderSizer
 end
 
 function (order_sizer::LongShortOrderSizer)(
-    broker::Broker, portfolio_id::String, weights::Dict, dt::DateTime
+    broker, portfolio_id::String, weights::Dict, dt::DateTime
 )
     portfolio_equity = total_equity(broker.portfolios[portfolio_id])
 

@@ -8,31 +8,31 @@ Fields
 ------
 - `start_dt::DateTime`
 - `end_dt::DateTime`
-- `pcm::PortfolioConstructionModel`
-- `exec_handler::ExecutionHandler`
-- `rebalance::Rebalance`
+- `pcm`
+- `exec_handler`
+- `rebalance`
 - `start_tracking_dt::DateTime`
 - `equity_curve::DataFrame`
 """
 struct BacktestTradingSession
     start_dt::DateTime
     end_dt::DateTime
-    pcm::PortfolioConstructionModel
-    exec_handler::ExecutionHandler
-    rebalance::Rebalance
+    pcm
+    exec_handler
+    rebalance
     start_tracking_dt::DateTime
     equity_curve::DataFrame
     function BacktestTradingSession(
         start_dt::DateTime,
         end_dt::DateTime,
-        universe::Universe,
-        broker::Broker,
-        alpha_model::AlphaModel,
-        rebalance::Rebalance,
+        universe,
+        broker,
+        alpha_model,
+        rebalance,
         portfolio_id::String,
-        order_sizer::OrderSizer,
-        portfolio_optimizer::PortfolioOptimizer;
-        # risk_model::RiskModel, #TODO: Implement
+        order_sizer,
+        portfolio_optimizer;
+        # risk_model, #TODO: Implement
         # signals::Vector{Signals}, #TODO: Implement
         start_tracking_dt::Union{Nothing,DateTime}=nothing,
     )

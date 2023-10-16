@@ -18,14 +18,14 @@ end
 
 """
 ```julia
-execute(algo::ExecutionAlgorithm, ord::Vector{Order})
+execute(algo, ord::Vector{Order})
 ```
 
 Execute algorithm to get rebalanced portfolio
 
 Parameters
 ----------
-- `algo::ExecutionAlgorithm`
+- `algo`
 - `ord::Vector{Order}`
 
 Returns
