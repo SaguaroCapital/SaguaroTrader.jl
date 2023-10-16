@@ -1,10 +1,10 @@
 
+abstract type FeeModel end
 """
 Abstract type to handle the calculation of 
 brokerage fee, fees and taxes.
 """
-
-abstract type FeeModel end
+FeeModel
 
 include("zero_fee_model.jl")
 include("percent_fee_model.jl")
