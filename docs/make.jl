@@ -17,4 +17,4 @@ makedocs(;
     warnonly = true
 )
 
-# deploydocs(; repo="github.com/SaguaroCapital/SaguaroTrader.jl.git")
+deploydocs(; repo="github.com/SaguaroCapital/SaguaroTrader.jl.git")
