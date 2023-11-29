@@ -33,5 +33,5 @@ for t in tests
 end
 
 @testset verbose = true "Code quality (Aqua.jl)" begin
-    Aqua.test_all(SaguaroTrader; ambiguities=false, project_toml_formatting=false)
+    Aqua.test_all(SaguaroTrader; ambiguities=false)
 end

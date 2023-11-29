@@ -4,7 +4,6 @@ using CSV
 using DataFrames
 using Dates
 using DataStructures
-using Impute
 using Random
 using UUIDs
 
@@ -14,6 +13,7 @@ include("order/order.jl")
 include("fee_model/fee_model.jl")
 include("exchange/exchange.jl")
 include("data/data.jl")
+include("data/impute.jl")
 include("portfolio/portfolio.jl")
 include("portfolio_optimizer/portfolio_optimizer.jl")
 include("slippage_model/slippage_model.jl")
