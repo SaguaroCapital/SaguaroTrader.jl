@@ -25,7 +25,7 @@ function SaguaroTrader.download_market_data(
     if !isdir(data_dir)
         mkdir(data_dir)
     end
-    
+
     df = DataFrame(yahoo(security, YahooOpt(; period1=start_dt, period2=end_dt)))
     CSV.write(joinpath(data_dir, "$security.csv"), df)
     return nothing

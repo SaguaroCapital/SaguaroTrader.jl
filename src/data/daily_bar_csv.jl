@@ -81,9 +81,15 @@ function _detect_adj_column(columns::AbstractVector{String}, identifier::String)
     return error("Unable to detect '$identifier' column in columns: $columns")
 end
 
-_detect_adj_column(columns::AbstractVector{Symbol}, identifier::String) = _detect_adj_column(string.(columns), identifier)
-_detect_adj_column(columns::AbstractVector{String}, identifier::Symbol) = _detect_adj_column(columns, string(identifier))
-_detect_adj_column(columns::AbstractVector{Symbol}, identifier::Symbol) = _detect_adj_column(string.(columns), string(identifier))
+function _detect_adj_column(columns::AbstractVector{Symbol}, identifier::String)
+    return _detect_adj_column(string.(columns), identifier)
+end
+function _detect_adj_column(columns::AbstractVector{String}, identifier::Symbol)
+    return _detect_adj_column(columns, string(identifier))
+end
+function _detect_adj_column(columns::AbstractVector{Symbol}, identifier::Symbol)
+    return _detect_adj_column(string.(columns), string(identifier))
+end
 
 """
 Estimate Bid-Ask spreads from OHLCV data
@@ -295,7 +301,10 @@ function _get_timestamp_end(end_dt::DateTime, v::AbstractVector{DateTime})::keyt
 end
 
 function get_assets_historical_bids(
-    ds::CSVDailyBarSource, start_dt::DateTime, end_dt::DateTime, assets::AbstractVector{Symbol}
+    ds::CSVDailyBarSource,
+    start_dt::DateTime,
+    end_dt::DateTime,
+    assets::AbstractVector{Symbol},
 )
     # TODO: do we want historical close like qstrader uses?
     prices_df = DataFrame(; timestamp=Vector{DateTime}())

@@ -12,7 +12,12 @@ end_dt = DateTime(2023, 5, 1)
 initial_cash = 100_000.0
 
 # Download market data for GLD
-download_market_data([:GLD, :SPY]; start_dt=DateTime(2006, 12, 26), end_dt=DateTime(2023, 4, 27), check_exists=true)
+download_market_data(
+    [:GLD, :SPY];
+    start_dt=DateTime(2006, 12, 26),
+    end_dt=DateTime(2023, 4, 27),
+    check_exists=true,
+)
 
 #####################################################
 # Prepare broker
@@ -63,7 +68,9 @@ run!(strategy_trading_session)
 
 # Download market data for SPY
 
-download_market_data(:SPY; start_dt=DateTime(2006, 12, 26), end_dt=DateTime(2023, 4, 27), check_exists=true)
+download_market_data(
+    :SPY; start_dt=DateTime(2006, 12, 26), end_dt=DateTime(2023, 4, 27), check_exists=true
+)
 
 data_source = CSVDailyBarSource("./temp/"; csv_symbols=[Symbol(:SPY)])
 

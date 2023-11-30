@@ -34,11 +34,9 @@ end
     @test SaguaroTrader._detect_adj_column(columns, "close") == :adj_close
     @test SaguaroTrader._detect_adj_column(columns, "open") == :adj_open
 
-
     @test SaguaroTrader._detect_adj_column(columns, :close) == :adj_close
     @test SaguaroTrader._detect_adj_column(Symbol.(columns), "close") == :adj_close
     @test SaguaroTrader._detect_adj_column(Symbol.(columns), :close) == :adj_close
-
 end
 
 ########################################################################
@@ -67,7 +65,6 @@ end
     @test size(unique_events, 1) == 9382
     @test size(unique_events) == size(unique(unique_events))
 end
-
 
 ########################################################################
 # Impute

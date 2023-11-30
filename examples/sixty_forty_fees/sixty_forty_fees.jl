@@ -25,11 +25,13 @@ data_handler = BacktestDataHandler([data_source])
 port_optimizer = FixedWeightPortfolioOptimizer(data_handler)
 
 # create percent fee model to be used in simulated broker
-fee_model = PercentFeeModel(fee_pct=0.1/100, tax_pct=0.5/100)
+fee_model = PercentFeeModel(; fee_pct=0.1 / 100, tax_pct=0.5 / 100)
 
 # create exchange, broker
 exchange = SimulatedExchange(start_dt)
-broker = SimulatedBroker(start_dt, exchange, data_handler; initial_cash=initial_cash, fee_model=fee_model)
+broker = SimulatedBroker(
+    start_dt, exchange, data_handler; initial_cash=initial_cash, fee_model=fee_model
+)
 
 #####################################################
 # 60% SPY, 40% AAG (bonds)
@@ -65,7 +67,6 @@ run!(strategy_trading_session)
 # SPY Benchmark
 ######################################################
 
-
 # create exchange, broker. use default zero fee model
 exchange = SimulatedExchange(start_dt)
 broker = SimulatedBroker(start_dt, exchange, data_handler; initial_cash=initial_cash)
@@ -79,7 +80,6 @@ signal_weights = Dict(Equity(:SPY) => 1.0)
 alpha_model = FixedSignalsAlphaModel(signal_weights)
 order_sizer = DollarWeightedOrderSizer(0.001)
 rebalance = BuyAndHoldRebalance(Date(start_dt))
-
 
 # Run SPY backtest
 benchmark_trading_session = BacktestTradingSession(
