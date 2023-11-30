@@ -12,12 +12,10 @@ end_dt = DateTime(2023, 5, 1)
 initial_cash = 100_000.0
 
 # Download market data for GLD
-download_market_data(
-    [:GLD, :SPY];
-    start_dt=DateTime(2006, 12, 26),
-    end_dt=DateTime(2023, 4, 27),
-    check_exists=true,
-)
+download_market_data([:GLD, :SPY];
+                     start_dt=DateTime(2006, 12, 26),
+                     end_dt=DateTime(2023, 4, 27),
+                     check_exists=true)
 
 #####################################################
 # Prepare broker
@@ -49,17 +47,15 @@ order_sizer = DollarWeightedOrderSizer(0.01)
 rebalance = BuyAndHoldRebalance(Date(start_dt))
 
 # Run Buy and Hold backtest
-strategy_trading_session = BacktestTradingSession(
-    start_dt,
-    end_dt,
-    universe,
-    broker,
-    alpha_model,
-    rebalance,
-    portfolio_id,
-    order_sizer,
-    port_optimizer,
-)
+strategy_trading_session = BacktestTradingSession(start_dt,
+                                                  end_dt,
+                                                  universe,
+                                                  broker,
+                                                  alpha_model,
+                                                  rebalance,
+                                                  portfolio_id,
+                                                  order_sizer,
+                                                  port_optimizer)
 run!(strategy_trading_session)
 
 #####################################################
@@ -68,9 +64,8 @@ run!(strategy_trading_session)
 
 # Download market data for SPY
 
-download_market_data(
-    :SPY; start_dt=DateTime(2006, 12, 26), end_dt=DateTime(2023, 4, 27), check_exists=true
-)
+download_market_data(:SPY; start_dt=DateTime(2006, 12, 26), end_dt=DateTime(2023, 4, 27),
+                     check_exists=true)
 
 data_source = CSVDailyBarSource("./temp/"; csv_symbols=[Symbol(:SPY)])
 
@@ -92,25 +87,21 @@ order_sizer = DollarWeightedOrderSizer(0.01)
 rebalance = BuyAndHoldRebalance(Date(start_dt))
 
 # Run SPY backtest
-benchmark_trading_session = BacktestTradingSession(
-    start_dt,
-    end_dt,
-    universe,
-    broker,
-    alpha_model,
-    rebalance,
-    portfolio_id,
-    order_sizer,
-    port_optimizer,
-)
+benchmark_trading_session = BacktestTradingSession(start_dt,
+                                                   end_dt,
+                                                   universe,
+                                                   broker,
+                                                   alpha_model,
+                                                   rebalance,
+                                                   portfolio_id,
+                                                   order_sizer,
+                                                   port_optimizer)
 run!(benchmark_trading_session)
 
 #####################################################
 # Plot results
 ######################################################
-plt_tearsheet = SaguaroTraderResults.plot_tearsheet(
-    strategy_trading_session,
-    benchmark_trading_session;
-    title="Buy and Hold GLD vs SPY Benchmark",
-)
+plt_tearsheet = SaguaroTraderResults.plot_tearsheet(strategy_trading_session,
+                                                    benchmark_trading_session;
+                                                    title="Buy and Hold GLD vs SPY Benchmark")
 savefig(plt_tearsheet, "./buy_and_hold.png")

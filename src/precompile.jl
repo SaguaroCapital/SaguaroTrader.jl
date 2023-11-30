@@ -7,11 +7,10 @@ using PrecompileTools
     start_dt = DateTime(2020, 1, 1)
     end_dt = DateTime(2020, 12, 31)
     signal_weights = Dict(Equity(:AMD) => 1.0, Equity(:INTC) => 1.0)
-    rolling_signal_weights = Dict(
-        DateTime(2020) => Dict(Equity(:AMD) => 1.0, Equity(:INTC) => 1.0),
-        DateTime(2021) => Dict(Equity(:INTC) => 1.0),
-        DateTime(2022) => Dict(Equity(:AMD) => 1.0),
-    )
+    rolling_signal_weights = Dict(DateTime(2020) => Dict(Equity(:AMD) => 1.0,
+                                                         Equity(:INTC) => 1.0),
+                                  DateTime(2021) => Dict(Equity(:INTC) => 1.0),
+                                  DateTime(2022) => Dict(Equity(:AMD) => 1.0))
 
     @compile_workload begin
         # all calls in this block will be precompiled, regardless of whether
@@ -23,12 +22,10 @@ using PrecompileTools
         uni = StaticUniverse(static_assets)
 
         # dynamic universe
-        dynamic_assets = Dict(
-            Equity(:AMD) => start_dt,
-            Equity(:INTC) => start_dt,
-            Equity(:NVDA) => start_dt,
-            Cash() => start_dt,
-        )
+        dynamic_assets = Dict(Equity(:AMD) => start_dt,
+                              Equity(:INTC) => start_dt,
+                              Equity(:NVDA) => start_dt,
+                              Cash() => start_dt)
         uni = DynamicUniverse(dynamic_assets)
         _get_assets(uni, end_dt)
 

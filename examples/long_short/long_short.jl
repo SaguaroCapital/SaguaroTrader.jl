@@ -45,17 +45,15 @@ order_sizer = LongShortOrderSizer(5.0)
 rebalance = BuyAndHoldRebalance(Date(start_dt))
 
 # Run 60/40 backtest
-strategy_trading_session = BacktestTradingSession(
-    start_dt,
-    end_dt,
-    universe,
-    broker,
-    alpha_model,
-    rebalance,
-    portfolio_id,
-    order_sizer,
-    port_optimizer,
-)
+strategy_trading_session = BacktestTradingSession(start_dt,
+                                                  end_dt,
+                                                  universe,
+                                                  broker,
+                                                  alpha_model,
+                                                  rebalance,
+                                                  portfolio_id,
+                                                  order_sizer,
+                                                  port_optimizer)
 run!(strategy_trading_session)
 
 #####################################################
@@ -79,23 +77,21 @@ order_sizer = DollarWeightedOrderSizer(0.001)
 rebalance = BuyAndHoldRebalance(Date(start_dt))
 
 # Run SPY backtest
-benchmark_trading_session = BacktestTradingSession(
-    start_dt,
-    end_dt,
-    universe,
-    broker,
-    alpha_model,
-    rebalance,
-    portfolio_id,
-    order_sizer,
-    port_optimizer,
-)
+benchmark_trading_session = BacktestTradingSession(start_dt,
+                                                   end_dt,
+                                                   universe,
+                                                   broker,
+                                                   alpha_model,
+                                                   rebalance,
+                                                   portfolio_id,
+                                                   order_sizer,
+                                                   port_optimizer)
 run!(benchmark_trading_session)
 
 #####################################################
 # Plot results
 ######################################################
-plt_tearsheet = SaguaroTraderResults.plot_tearsheet(
-    strategy_trading_session, benchmark_trading_session; title="Long/Short ETFs"
-)
+plt_tearsheet = SaguaroTraderResults.plot_tearsheet(strategy_trading_session,
+                                                    benchmark_trading_session;
+                                                    title="Long/Short ETFs")
 savefig(plt_tearsheet, "./long_short.png")

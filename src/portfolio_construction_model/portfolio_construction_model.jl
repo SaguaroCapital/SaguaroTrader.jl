@@ -13,12 +13,12 @@ Fields
 - `alpha_model`
 """
 struct PortfolioConstructionModel
-    broker
+    broker::Any
     portfolio_id::String
-    universe
-    order_sizer
-    portfolio_optimizer
-    alpha_model
+    universe::Any
+    order_sizer::Any
+    portfolio_optimizer::Any
+    alpha_model::Any
     #TODO: add risk/cost models
     # risk_model
     # cost_model::CostModel
@@ -34,18 +34,15 @@ function _get_current_positions(pcm)
     return pcm.broker.portfolios[pcm.portfolio_id].pos_handler.positions
 end
 
-function _create_rebalance_orders(
-    current_positions::Dict{Symbol,Position},
-    target_positions::Dict{Asset,Int},
-    dt::DateTime,
-)
+function _create_rebalance_orders(current_positions::Dict{Symbol,Position},
+                                  target_positions::Dict{Asset,Int},
+                                  dt::DateTime)
     target_positions_assets = keys(target_positions)
     rebalance_orders_dict = Dict{Asset,Order}()
     for (_, position) in current_positions
         if !(position.asset in target_positions_assets)
-            rebalance_orders_dict[position.asset] = Order(
-                dt, -position.net_quantity, position.asset
-            )
+            rebalance_orders_dict[position.asset] = Order(dt, -position.net_quantity,
+                                                          position.asset)
         end
     end
 
@@ -56,9 +53,8 @@ function _create_rebalance_orders(
             if current_quantity == target_quantity
                 continue
             else
-                rebalance_orders_dict[asset] = Order(
-                    dt, target_quantity - current_quantity, asset
-                )
+                rebalance_orders_dict[asset] = Order(dt, target_quantity - current_quantity,
+                                                     asset)
             end
         else # new position
             rebalance_orders_dict[asset] = Order(dt, target_quantity, asset)

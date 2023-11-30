@@ -3,59 +3,51 @@ function _csv_file_to_symbol(csv_file::String)
     return (x -> Symbol(replace(x[end], ".csv" => "")))(splitpath(csv_file))
 end
 
-function _load_csv_into_df(
-    csv_file::String,
-    adjust_prices::Bool,
-    market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
-    market_close::Dates.CompoundPeriod=Hour(21) + Minute(59),
-    start_dt::DateTime=DateTime(1900),
-    end_dt::DateTime=DateTime(2100);
-    time_col::Symbol=:timestamp,
-    open_col::Symbol=:Open,
-    close_col::Symbol=:Close,
-    volume_col::Symbol=:Volume,
-)
+function _load_csv_into_df(csv_file::String,
+                           adjust_prices::Bool,
+                           market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
+                           market_close::Dates.CompoundPeriod=Hour(21) + Minute(59),
+                           start_dt::DateTime=DateTime(1900),
+                           end_dt::DateTime=DateTime(2100);
+                           time_col::Symbol=:timestamp,
+                           open_col::Symbol=:Open,
+                           close_col::Symbol=:Close,
+                           volume_col::Symbol=:Volume)
     df = DataFrame(CSV.File(csv_file))
     mask = (df[:, time_col] .>= start_dt) .& (df[:, time_col] .<= end_dt)
     df = df[mask, :]
-    return _convert_bar_frame_into_df_bid_ask(
-        df;
-        adjust_prices,
-        market_open,
-        market_close,
-        time_col,
-        open_col,
-        close_col,
-        volume_col,
-    )
+    return _convert_bar_frame_into_df_bid_ask(df;
+                                              adjust_prices,
+                                              market_open,
+                                              market_close,
+                                              time_col,
+                                              open_col,
+                                              close_col,
+                                              volume_col)
 end
 
-function _load_csvs_into_dfs(
-    csv_files::AbstractVector{String},
-    adjust_prices::Bool=false,
-    market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
-    market_close::Dates.CompoundPeriod=Hour(21) + Minute(59),
-    start_dt=DateTime(1900),
-    end_dt=DateTime(2100);
-    time_col::Symbol=:timestamp,
-    open_col::Symbol=:Open,
-    close_col::Symbol=:Close,
-    volume_col::Symbol=:Volume,
-)
+function _load_csvs_into_dfs(csv_files::AbstractVector{String},
+                             adjust_prices::Bool=false,
+                             market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
+                             market_close::Dates.CompoundPeriod=Hour(21) + Minute(59),
+                             start_dt=DateTime(1900),
+                             end_dt=DateTime(2100);
+                             time_col::Symbol=:timestamp,
+                             open_col::Symbol=:Open,
+                             close_col::Symbol=:Close,
+                             volume_col::Symbol=:Volume)
     dict_asset_dfs = Dict{Symbol,DataFrame}()
     for file in csv_files
-        dict_asset_dfs[_csv_file_to_symbol(file)] = _load_csv_into_df(
-            file,
-            adjust_prices,
-            market_open,
-            market_close,
-            start_dt,
-            end_dt;
-            time_col,
-            open_col,
-            close_col,
-            volume_col,
-        )
+        dict_asset_dfs[_csv_file_to_symbol(file)] = _load_csv_into_df(file,
+                                                                      adjust_prices,
+                                                                      market_open,
+                                                                      market_close,
+                                                                      start_dt,
+                                                                      end_dt;
+                                                                      time_col,
+                                                                      open_col,
+                                                                      close_col,
+                                                                      volume_col)
     end
     return dict_asset_dfs
 end
@@ -105,16 +97,16 @@ Returns
     The individually-timestamped open/closing prices, optionally
             adjusted for corporate actions
 """
-function _convert_bar_frame_into_df_bid_ask(
-    df_bar::DataFrame;
-    adjust_prices::Bool=true,
-    market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
-    market_close::Dates.CompoundPeriod=Hour(20) + Minute(59),
-    time_col::Symbol=:timestamp,
-    open_col::Symbol=:Open,
-    close_col::Symbol=:Close,
-    volume_col::Symbol=:Volume,
-)
+function _convert_bar_frame_into_df_bid_ask(df_bar::DataFrame;
+                                            adjust_prices::Bool=true,
+                                            market_open::Dates.CompoundPeriod=Hour(14) +
+                                                                              Minute(30),
+                                            market_close::Dates.CompoundPeriod=Hour(20) +
+                                                                               Minute(59),
+                                            time_col::Symbol=:timestamp,
+                                            open_col::Symbol=:Open,
+                                            close_col::Symbol=:Close,
+                                            volume_col::Symbol=:Volume)
     sort!(df_bar, time_col)
 
     # create open/close df
@@ -123,12 +115,11 @@ function _convert_bar_frame_into_df_bid_ask(
         adj_open_column = _detect_adj_column(cols, "open")
         adj_close_column = _detect_adj_column(cols, "close")
         df_oc = df_bar[:, [time_col, open_col, close_col, adj_close_column]]
-        df_oc[:, adj_open_column] =
-            (df_oc[:, adj_close_column] ./ df_oc[:, close_col]) .* df_oc[:, open_col]
+        df_oc[:, adj_open_column] = (df_oc[:, adj_close_column] ./ df_oc[:, close_col]) .*
+                                    df_oc[:, open_col]
         select!(df_oc, [time_col, adj_open_column, adj_close_column])
-        DataFrames.rename!(
-            df_oc, adj_open_column => open_col, adj_close_column => close_col
-        )
+        DataFrames.rename!(df_oc, adj_open_column => open_col,
+                           adj_close_column => close_col)
     else
         df_oc = select(df_bar, [time_col, open_col, close_col, volume_col])
     end
@@ -158,11 +149,9 @@ function _convert_bar_frame_into_df_bid_ask(
     df_bid = vcat(df_open, df_close; cols=:union)
     sort!(df_bid, time_col)
     if any(ismissing.(df_bid.Ask))
-        df_bid = transform(
-            df_bid,
-            "Ask" .=> x -> impute!(x, LOCF(; limit=nothing); dims=:cols);
-            renamecols=false,
-        )
+        df_bid = transform(df_bid,
+                           "Ask" .=> x -> impute!(x, LOCF(; limit=nothing); dims=:cols);
+                           renamecols=false)
     end
     df_bid.Bid = df_bid.Ask
 
@@ -203,52 +192,45 @@ struct CSVDailyBarSource <: DataSource
     csv_symbols::Union{Nothing,Vector{Symbol}}
     market_open::Dates.CompoundPeriod
     market_close::Dates.CompoundPeriod
-    function CSVDailyBarSource(
-        csv_dir::String;
-        asset_type::DataType=Equity,
-        adjust_prices::Bool=false,
-        csv_symbols::Union{Nothing,Vector{Symbol}}=nothing,
-        market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
-        market_close::Dates.CompoundPeriod=Hour(20) + Minute(59),
-        start_dt::DateTime=DateTime(1900),
-        end_dt::DateTime=DateTime(2100),
-        time_col::Symbol=:timestamp,
-        open_col::Symbol=:Open,
-        close_col::Symbol=:Close,
-        volume_col::Symbol=:Volume,
-    )
+    function CSVDailyBarSource(csv_dir::String;
+                               asset_type::DataType=Equity,
+                               adjust_prices::Bool=false,
+                               csv_symbols::Union{Nothing,Vector{Symbol}}=nothing,
+                               market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
+                               market_close::Dates.CompoundPeriod=Hour(20) + Minute(59),
+                               start_dt::DateTime=DateTime(1900),
+                               end_dt::DateTime=DateTime(2100),
+                               time_col::Symbol=:timestamp,
+                               open_col::Symbol=:Open,
+                               close_col::Symbol=:Close,
+                               volume_col::Symbol=:Volume)
         @assert start_dt < end_dt "Start Date $start_dt must be before $end_dt"
         csv_files = [joinpath(csv_dir, i) for i in readdir(csv_dir) if occursin(".csv", i)]
         if !isnothing(csv_symbols)
-            csv_files = [
-                i for i in csv_files if any(_csv_file_to_symbol(i) .== csv_symbols)
-            ]
+            csv_files = [i
+                         for i in csv_files if any(_csv_file_to_symbol(i) .== csv_symbols)]
         else
             csv_symbols = [_csv_file_to_symbol(i) for i in csv_files]
         end
-        dict_asset_dfs = _load_csvs_into_dfs(
-            csv_files,
-            adjust_prices,
-            market_open,
-            market_close,
-            start_dt,
-            end_dt;
-            time_col,
-            open_col,
-            close_col,
-            volume_col,
-        )
+        dict_asset_dfs = _load_csvs_into_dfs(csv_files,
+                                             adjust_prices,
+                                             market_open,
+                                             market_close,
+                                             start_dt,
+                                             end_dt;
+                                             time_col,
+                                             open_col,
+                                             close_col,
+                                             volume_col)
         assets = [asset_type(Symbol(asset)) for asset in csv_symbols]
-        return new(
-            csv_dir,
-            asset_type,
-            adjust_prices,
-            assets,
-            dict_asset_dfs,
-            csv_symbols,
-            market_open,
-            market_close,
-        )
+        return new(csv_dir,
+                   asset_type,
+                   adjust_prices,
+                   assets,
+                   dict_asset_dfs,
+                   csv_symbols,
+                   market_open,
+                   market_close)
     end
 end
 
@@ -300,12 +282,10 @@ function _get_timestamp_end(end_dt::DateTime, v::AbstractVector{DateTime})::keyt
     end
 end
 
-function get_assets_historical_bids(
-    ds::CSVDailyBarSource,
-    start_dt::DateTime,
-    end_dt::DateTime,
-    assets::AbstractVector{Symbol},
-)
+function get_assets_historical_bids(ds::CSVDailyBarSource,
+                                    start_dt::DateTime,
+                                    end_dt::DateTime,
+                                    assets::AbstractVector{Symbol})
     # TODO: do we want historical close like qstrader uses?
     prices_df = DataFrame(; timestamp=Vector{DateTime}())
     dict_keys = keys(ds.dict_asset_dfs)

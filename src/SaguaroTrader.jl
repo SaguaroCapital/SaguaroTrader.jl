@@ -38,103 +38,103 @@ end
 
 export
 
-    # asset
-    Asset,
-    Cash,
-    Equity,
-    Universe,
-    DynamicUniverse,
-    StaticUniverse,
+# asset
+      Asset,
+      Cash,
+      Equity,
+      Universe,
+      DynamicUniverse,
+      StaticUniverse,
 
-    # order
-    Order,
+# order
+      Order,
 
-    # exchange
-    Exchange,
-    SimulatedExchange,
-    AlwaysOpenExchange,
+# exchange
+      Exchange,
+      SimulatedExchange,
+      AlwaysOpenExchange,
 
-    # fee model
-    FeeModel,
-    ZeroFeeModel,
-    PercentFeeModel,
-    calculate_fee,
+# fee model
+      FeeModel,
+      ZeroFeeModel,
+      PercentFeeModel,
+      calculate_fee,
 
-    # data source
-    DataSource,
-    CSVDailyBarSource,
-    get_bid,
-    get_ask,
-    get_assets_historical_bids,
+# data source
+      DataSource,
+      CSVDailyBarSource,
+      get_bid,
+      get_ask,
+      get_assets_historical_bids,
 
-    # data handler
-    DataHandler,
-    BacktestDataHandler,
-    get_asset_latest_bid_ask_price,
-    get_asset_latest_mid_price,
-    get_assets_historical_range_close_price,
+# data handler
+      DataHandler,
+      BacktestDataHandler,
+      get_asset_latest_bid_ask_price,
+      get_asset_latest_mid_price,
+      get_assets_historical_range_close_price,
 
-    # portfolio
-    Transaction,
-    cost_without_fee,
-    cost_with_fee,
-    Position,
-    position_from_transaction,
-    PositionHandler,
-    PortfolioEvent,
-    create_subscription,
-    create_withdrawal,
-    create_asset_transaction,
-    Portfolio,
-    total_market_value,
-    total_equity,
+# portfolio
+      Transaction,
+      cost_without_fee,
+      cost_with_fee,
+      Position,
+      position_from_transaction,
+      PositionHandler,
+      PortfolioEvent,
+      create_subscription,
+      create_withdrawal,
+      create_asset_transaction,
+      Portfolio,
+      total_market_value,
+      total_equity,
 
-    # alpha model
-    AlphaModel,
-    FixedSignalsAlphaModel,
-    RollingSignalsAlphaModel,
-    SingleSignalAlphaModel,
+# alpha model
+      AlphaModel,
+      FixedSignalsAlphaModel,
+      RollingSignalsAlphaModel,
+      SingleSignalAlphaModel,
 
-    # slippage model
-    SlippageModel,
-    ZeroSlippageModel,
-    FixedSlippageModel,
-    PercentSlippageModel,
-    VolumeSharesSlippageModel,
+# slippage model
+      SlippageModel,
+      ZeroSlippageModel,
+      FixedSlippageModel,
+      PercentSlippageModel,
+      VolumeSharesSlippageModel,
 
-    # portfolio optimizer
-    PortfolioOptimizer,
-    FixedWeightPortfolioOptimizer,
-    EqualWeightPortfolioOptimizer,
+# portfolio optimizer
+      PortfolioOptimizer,
+      FixedWeightPortfolioOptimizer,
+      EqualWeightPortfolioOptimizer,
 
-    # broker
-    SimulatedBroker,
-    create_portfolio!,
-    subscribe_funds!,
-    withdraw_funds!,
-    subscribe_funds_to_portfolio!,
-    withdraw_funds_from_portfolio!,
+# broker
+      SimulatedBroker,
+      create_portfolio!,
+      subscribe_funds!,
+      withdraw_funds!,
+      subscribe_funds_to_portfolio!,
+      withdraw_funds_from_portfolio!,
 
-    # order sizer
-    OrderSizer,
-    DollarWeightedOrderSizer,
-    LongShortOrderSizer,
+# order sizer
+      OrderSizer,
+      DollarWeightedOrderSizer,
+      LongShortOrderSizer,
 
-    # pcm
-    PortfolioConstructionModel,
+# pcm
+      PortfolioConstructionModel,
 
-    # rebalance
-    Rebalance,
-    BuyAndHoldRebalance,
-    DailyRebalance,
-    WeeklyRebalance,
-    MonthlyRebalance,
+# rebalance
+      Rebalance,
+      BuyAndHoldRebalance,
+      DailyRebalance,
+      WeeklyRebalance,
+      MonthlyRebalance,
 
-    # Trading
-    BacktestTradingSession,
-    run!,
+# Trading
+      BacktestTradingSession,
+      run!,
 
-    #ext
-    download_market_data
+#ext
+      download_market_data
 
 end

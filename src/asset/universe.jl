@@ -12,7 +12,7 @@ Parameters
 - `assets`
 """
 struct StaticUniverse <: Universe
-    assets
+    assets::Any
 end
 
 """
@@ -47,7 +47,6 @@ Returns
 - `Vector{Asset}`
 """
 function _get_assets(uni::DynamicUniverse, dt)::AbstractVector{Asset}
-    return Vector{Asset}([
-        asset for (asset, asset_date) in uni.asset_dates if asset_date < dt
-    ])
+    return Vector{Asset}([asset
+                          for (asset, asset_date) in uni.asset_dates if asset_date < dt])
 end

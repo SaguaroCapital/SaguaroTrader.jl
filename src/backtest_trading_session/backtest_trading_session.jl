@@ -17,41 +17,36 @@ Fields
 struct BacktestTradingSession
     start_dt::DateTime
     end_dt::DateTime
-    pcm
-    exec_handler
-    rebalance
+    pcm::Any
+    exec_handler::Any
+    rebalance::Any
     start_tracking_dt::DateTime
     equity_curve::DataFrame
-    function BacktestTradingSession(
-        start_dt::DateTime,
-        end_dt::DateTime,
-        universe,
-        broker,
-        alpha_model,
-        rebalance,
-        portfolio_id::String,
-        order_sizer,
-        portfolio_optimizer;
-        # risk_model, #TODO: Implement
-        # signals, #TODO: Implement
-        start_tracking_dt::Union{Nothing,DateTime}=nothing,
-    )
+    function BacktestTradingSession(start_dt::DateTime,
+                                    end_dt::DateTime,
+                                    universe,
+                                    broker,
+                                    alpha_model,
+                                    rebalance,
+                                    portfolio_id::String,
+                                    order_sizer,
+                                    portfolio_optimizer;
+                                    # risk_model, #TODO: Implement
+                                    # signals, #TODO: Implement
+                                    start_tracking_dt::Union{Nothing,DateTime}=nothing)
         @assert portfolio_id in keys(broker.portfolios) "`portfolio_id` not found ($portfolio_id)"
         if isnothing(start_tracking_dt)
             start_tracking_dt = start_dt
         end
-        pcm = PortfolioConstructionModel(
-            broker, portfolio_id, universe, order_sizer, portfolio_optimizer, alpha_model
-        )
+        pcm = PortfolioConstructionModel(broker, portfolio_id, universe, order_sizer,
+                                         portfolio_optimizer, alpha_model)
         exec_handler = ExecutionHandler(broker, portfolio_id; submit_orders=true)
         initial_equity = total_equity(pcm.broker.portfolios[portfolio_id])
         equity_curve = DataFrame(;
-            timestamp=Vector{DateTime}([start_dt]),
-            total_equity=Vector{Float64}([initial_equity]),
-        )
-        return new(
-            start_dt, end_dt, pcm, exec_handler, rebalance, start_tracking_dt, equity_curve
-        )
+                                 timestamp=Vector{DateTime}([start_dt]),
+                                 total_equity=Vector{Float64}([initial_equity]))
+        return new(start_dt, end_dt, pcm, exec_handler, rebalance, start_tracking_dt,
+                   equity_curve)
     end
 end
 
@@ -117,25 +112,23 @@ Parameters
 - `rebalance_event::Symbol=:market_open`
 """
 function run!(trading_session::BacktestTradingSession; rebalance_event::Symbol=:market_open)
-    df_events = _get_unique_pricing_events(
-        trading_session.pcm.broker.data_handler,
-        trading_session.start_dt,
-        trading_session.end_dt,
-    )
+    df_events = _get_unique_pricing_events(trading_session.pcm.broker.data_handler,
+                                           trading_session.start_dt,
+                                           trading_session.end_dt)
     sort!(df_events, :timestamp)
 
     # add rebalances to df_events
-    rebalance_events = [
-        i for i in trading_session.rebalance.rebalances if i in df_events.timestamp
-    ]
+    rebalance_events = [i
+                        for i in trading_session.rebalance.rebalances
+                        if i in df_events.timestamp]
     potential_rebalances = df_events[df_events.event_type .== rebalance_event, :timestamp]
-    missing_rebalances = [
-        _closest_event(potential_rebalances, i) for
-        i in trading_session.rebalance.rebalances if !(i in df_events.timestamp)
-    ]
+    missing_rebalances = [_closest_event(potential_rebalances, i)
+                          for
+                          i in trading_session.rebalance.rebalances
+                          if !(i in df_events.timestamp)]
     df_rebalances = DataFrame(;
-        timestamp=Vector{DateTime}([potential_rebalances..., missing_rebalances...])
-    )
+                              timestamp=Vector{DateTime}([potential_rebalances...,
+                                                          missing_rebalances...]))
     df_rebalances[:, :event_type] .= :rebalance
 
     df_events = unique(vcat(df_events, df_rebalances))

@@ -8,7 +8,7 @@ Fields
 - `signal::Float64`
 """
 struct SingleSignalAlphaModel <: AlphaModel
-    universe
+    universe::Any
     signal::Float64
 end
 

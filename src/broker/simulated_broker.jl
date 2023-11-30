@@ -19,48 +19,44 @@ Fields
 mutable struct SimulatedBroker <: Broker
     start_dt::DateTime
     current_dt::DateTime
-    exchange
+    exchange::Any
     data_handler::DataHandler
     account_id::String
     base_currency::String
     initial_cash::Float64
-    fee_model
-    slippage_model
+    fee_model::Any
+    slippage_model::Any
     # market_impact_model::AbstractMarketImpactModel # TODO: Implement
     cash_balances::Dict{String,Float64}
     portfolios::Dict{String,Portfolio}
     open_orders::Dict{String,Queue{Order}}
 
-    function SimulatedBroker(
-        start_dt::DateTime,
-        exchange,
-        data_handler::DataHandler;
-        account_id::String="",
-        base_currency::String="USD",
-        initial_cash::Float64=0.0,
-        fee_model=ZeroFeeModel(),
-        slippage_model=ZeroSlippageModel(),
-    )
+    function SimulatedBroker(start_dt::DateTime,
+                             exchange,
+                             data_handler::DataHandler;
+                             account_id::String="",
+                             base_currency::String="USD",
+                             initial_cash::Float64=0.0,
+                             fee_model=ZeroFeeModel(),
+                             slippage_model=ZeroSlippageModel())
         @assert initial_cash >= 0.0 "initial cash must be >= 0"
 
         cash_balances = Dict{String,Float64}(base_currency => initial_cash)
         portfolios = Dict{String,Portfolio}()
         open_orders = Dict{String,Queue{Order}}()
 
-        return new(
-            start_dt,
-            start_dt,
-            exchange,
-            data_handler,
-            account_id,
-            base_currency,
-            initial_cash,
-            fee_model,
-            slippage_model,
-            cash_balances,
-            portfolios,
-            open_orders,
-        )
+        return new(start_dt,
+                   start_dt,
+                   exchange,
+                   data_handler,
+                   account_id,
+                   base_currency,
+                   initial_cash,
+                   fee_model,
+                   slippage_model,
+                   cash_balances,
+                   portfolios,
+                   open_orders)
     end
 end
 
@@ -107,19 +103,16 @@ function get_account_total_equity(broker)
     return te
 end
 
-function create_portfolio!(
-    broker, initial_cash::Real; name::String="", portfolio_id::String=string(UUIDs.uuid1())
-)
+function create_portfolio!(broker, initial_cash::Real; name::String="",
+                           portfolio_id::String=string(UUIDs.uuid1()))
     error_msg = "Not enough cash in the broker $(broker.cash_balances[broker.base_currency])"
     @assert initial_cash <= broker.cash_balances[broker.base_currency] error_msg
     @assert initial_cash >= 0.0 "initial cash must be >= 0"
-    p = Portfolio(
-        broker.current_dt,
-        float(initial_cash),
-        broker.base_currency;
-        portfolio_id=portfolio_id,
-        name=name,
-    )
+    p = Portfolio(broker.current_dt,
+                  float(initial_cash),
+                  broker.base_currency;
+                  portfolio_id=portfolio_id,
+                  name=name)
     broker.portfolios[portfolio_id] = p
     broker.open_orders[portfolio_id] = Queue{Order}()
     broker.cash_balances[broker.base_currency] -= initial_cash
@@ -127,16 +120,13 @@ function create_portfolio!(
     return p
 end
 
-function create_portfolio!(
-    broker; name::String="", portfolio_id::String=string(UUIDs.uuid1())
-)
-    p = Portfolio(
-        broker.current_dt,
-        broker.cash_balances[broker.base_currency],
-        broker.base_currency;
-        portfolio_id=portfolio_id,
-        name=name,
-    )
+function create_portfolio!(broker; name::String="",
+                           portfolio_id::String=string(UUIDs.uuid1()))
+    p = Portfolio(broker.current_dt,
+                  broker.cash_balances[broker.base_currency],
+                  broker.base_currency;
+                  portfolio_id=portfolio_id,
+                  name=name)
     broker.portfolios[portfolio_id] = p
     broker.open_orders[portfolio_id] = Queue{Order}()
     broker.cash_balances[broker.base_currency] = 0.0
@@ -172,10 +162,8 @@ function _execute_order(broker, dt::DateTime, portfolio_id::String, order)
     volume = get_asset_latest_volume(broker.data_handler, dt, order.asset.symbol)
 
     if bid_ask === (missing, missing)
-        error(
-            "Unable to obtain a latest market price for $(order.asset)",
-            "$(order.order_id) was not executed",
-        )
+        error("Unable to obtain a latest market price for $(order.asset)",
+              "$(order.order_id) was not executed")
     end
 
     if order.direction > 0 # buy
@@ -183,9 +171,8 @@ function _execute_order(broker, dt::DateTime, portfolio_id::String, order)
     else # sell
         price = bid_ask[1]
     end
-    price = broker.slippage_model(
-        order.direction; price, volume, order_quantity=order.quantity
-    )
+    price = broker.slippage_model(order.direction; price, volume,
+                                  order_quantity=order.quantity)
 
     consideration = round(price * order.quantity; digits=2)
     fee = calculate_fee(broker.fee_model, order.quantity, price)
@@ -252,9 +239,8 @@ function update_prices!(broker, dt::DateTime)
             if mid_price == 0.0
                 error("Zero Price for $asset at $dt")
             end
-            update_current_price!(
-                broker.portfolios[portfolio_id].pos_handler.positions[asset], mid_price
-            )
+            update_current_price!(broker.portfolios[portfolio_id].pos_handler.positions[asset],
+                                  mid_price)
         end
     end
     return nothing

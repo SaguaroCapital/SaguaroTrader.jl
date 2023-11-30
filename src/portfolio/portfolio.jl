@@ -25,13 +25,11 @@ mutable struct Portfolio
     portfolio_id::String
     name::String
     history::AbstractVector{PortfolioEvent}
-    function Portfolio(
-        start_dt::DateTime,
-        starting_cash::Float64,
-        currency::String;
-        portfolio_id::String=string(UUIDs.uuid1()),
-        name::String="",
-    )
+    function Portfolio(start_dt::DateTime,
+                       starting_cash::Float64,
+                       currency::String;
+                       portfolio_id::String=string(UUIDs.uuid1()),
+                       name::String="")
         # if we have starting cash, create a subscription event
         if starting_cash > 0.0
             sub = create_subscription(start_dt, starting_cash, starting_cash)
@@ -42,9 +40,8 @@ mutable struct Portfolio
 
         pos_handler = PositionHandler(Dict{Symbol,Position}())
 
-        return new(
-            start_dt, starting_cash, currency, pos_handler, portfolio_id, name, history
-        )
+        return new(start_dt, starting_cash, currency, pos_handler, portfolio_id, name,
+                   history)
     end
 end
 
@@ -102,11 +99,9 @@ end
 
 function subscribe_funds!(port::Portfolio, dt::DateTime, amount::Real)
     if dt < port.current_dt
-        error(
-            "Subscription datetime $dt is earlier",
-            "than current portfolio datetime $(port.current_dt)",
-            "Cannot subscribe funds.",
-        )
+        error("Subscription datetime $dt is earlier",
+              "than current portfolio datetime $(port.current_dt)",
+              "Cannot subscribe funds.")
     elseif amount < 0.0
         error("Cannot credit negative amount: $amount")
     end
@@ -122,11 +117,9 @@ end
 
 function withdraw_funds!(port::Portfolio, dt::DateTime, amount::Float64)
     if dt < port.current_dt
-        error(
-            "Withdrawal datetime $dt is earlier",
-            "than current portfolio datetime $(port.current_dt)",
-            "Cannot withdraw funds.",
-        )
+        error("Withdrawal datetime $dt is earlier",
+              "than current portfolio datetime $(port.current_dt)",
+              "Cannot withdraw funds.")
     elseif amount < 0.0
         error("Cannot debit negative amount: $amount")
     elseif amount > port.cash
@@ -144,11 +137,9 @@ end
 
 function transact_asset!(port::Portfolio, txn::Transaction)
     if txn.dt < port.current_dt
-        error(
-            "Transaction datetime $(txn.dt) is earlier",
-            "than current portfolio datetime $(port.current_dt)",
-            "Cannot transact asset.",
-        )
+        error("Transaction datetime $(txn.dt) is earlier",
+              "than current portfolio datetime $(port.current_dt)",
+              "Cannot transact asset.")
     end
 
     txn_share_cost = txn.price * txn.quantity

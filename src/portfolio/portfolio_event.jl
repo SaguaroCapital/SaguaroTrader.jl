@@ -36,9 +36,8 @@ Returns
 - `PortfolioEvent`
 """
 function create_subscription(dt::DateTime, credit::Float64, balance::Float64)
-    return PortfolioEvent(
-        dt, "subscription", 0.0, round(credit; digits=2), round(balance; digits=2)
-    )
+    return PortfolioEvent(dt, "subscription", 0.0, round(credit; digits=2),
+                          round(balance; digits=2))
 end
 
 """
@@ -59,9 +58,8 @@ Returns
 - `PortfolioEvent`
 """
 function create_withdrawal(dt::DateTime, debit::Float64, balance::Float64)
-    return PortfolioEvent(
-        dt, "withdrawal", round(debit; digits=2), 0.0, round(balance; digits=2)
-    )
+    return PortfolioEvent(dt, "withdrawal", round(debit; digits=2), 0.0,
+                          round(balance; digits=2))
 end
 
 """
@@ -87,9 +85,8 @@ Returns
 -------
 - `PortfolioEvent`
 """
-function create_asset_transaction(
-    dt::DateTime, txn_total_cost::Float64, balance::Float64, direction::Int
-)
+function create_asset_transaction(dt::DateTime, txn_total_cost::Float64, balance::Float64,
+                                  direction::Int)
     credit = -1.0 * txn_total_cost
     if direction == 1
         type = "buy_asset"
