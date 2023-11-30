@@ -24,6 +24,23 @@
     @test size(unique_events) == size(unique(unique_events))
 end
 
+@testset "_detect_adj_column" begin
+    columns = ["open", "high", "low", "close", "volume"]
+    println(SaguaroTrader._detect_adj_column(columns, "close"))
+    @test SaguaroTrader._detect_adj_column(columns, "close") == :close
+    @test SaguaroTrader._detect_adj_column(columns, "open") == :open
+
+    columns = ["open", "high", "low", "close", "volume", "adj_open", "adj_close"]
+    @test SaguaroTrader._detect_adj_column(columns, "close") == :adj_close
+    @test SaguaroTrader._detect_adj_column(columns, "open") == :adj_open
+
+
+    @test SaguaroTrader._detect_adj_column(columns, :close) == :adj_close
+    @test SaguaroTrader._detect_adj_column(Symbol.(columns), "close") == :adj_close
+    @test SaguaroTrader._detect_adj_column(Symbol.(columns), :close) == :adj_close
+
+end
+
 ########################################################################
 # DataHandler
 ########################################################################

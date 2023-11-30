@@ -32,7 +32,7 @@ function SaguaroTrader.download_market_data(
 end
 
 function SaguaroTrader.download_market_data(
-    securities::Vector{Symbol},
+    securities::AbstractVector{Symbol},
     data_dir::String="./temp/";
     start_dt::DateTime=DateTime(1990, 1, 1),
     end_dt::DateTime=DateTime(2040, 1, 1),

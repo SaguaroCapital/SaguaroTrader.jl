@@ -15,7 +15,7 @@ Fields
 - `pos_handler::PositionHandler`
 - `portfolio_id::String`
 - `name::String`
-- `history::Vector{PortfolioEvent}`
+- `history::AbstractVector{PortfolioEvent}`
 """
 mutable struct Portfolio
     current_dt::DateTime
@@ -24,7 +24,7 @@ mutable struct Portfolio
     pos_handler::PositionHandler
     portfolio_id::String
     name::String
-    history::Vector{PortfolioEvent}
+    history::AbstractVector{PortfolioEvent}
     function Portfolio(
         start_dt::DateTime,
         starting_cash::Float64,
