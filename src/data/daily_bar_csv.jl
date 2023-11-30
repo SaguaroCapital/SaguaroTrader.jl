@@ -154,7 +154,7 @@ function _convert_bar_frame_into_df_bid_ask(
     if any(ismissing.(df_bid.Ask))
         df_bid = transform(
             df_bid,
-            "Ask" .=> x -> impute(x, LOCF(; limit=nothing); dims=:cols);
+            "Ask" .=> x -> impute!(x, LOCF(; limit=nothing); dims=:cols);
             renamecols=false,
         )
     end

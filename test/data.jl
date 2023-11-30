@@ -67,3 +67,13 @@ end
     @test size(unique_events, 1) == 9382
     @test size(unique_events) == size(unique(unique_events))
 end
+
+
+########################################################################
+# Impute
+########################################################################
+@testset "Impute (LOCF)" begin
+    x = [1.0, 2.0, missing, 4.0, 5.0, missing, 7.0]
+    x_imp = SaguaroTrader._impute_locf(x)
+    @test x_imp == [1.0, 2.0, 2.0, 4.0, 5.0, 5.0, 7.0]
+end
