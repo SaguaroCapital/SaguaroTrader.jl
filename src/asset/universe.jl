@@ -12,7 +12,7 @@ Parameters
 - `assets`
 """
 struct StaticUniverse <: Universe
-    assets
+    assets::Any
 end
 
 """

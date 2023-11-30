@@ -19,13 +19,13 @@ Fields
 mutable struct SimulatedBroker <: Broker
     start_dt::DateTime
     current_dt::DateTime
-    exchange
+    exchange::Any
     data_handler::DataHandler
     account_id::String
     base_currency::String
     initial_cash::Float64
-    fee_model
-    slippage_model
+    fee_model::Any
+    slippage_model::Any
     # market_impact_model::AbstractMarketImpactModel # TODO: Implement
     cash_balances::Dict{String,Float64}
     portfolios::Dict{String,Portfolio}
@@ -108,10 +108,7 @@ function get_account_total_equity(broker)
 end
 
 function create_portfolio!(
-    broker,
-    initial_cash::Real;
-    name::String="",
-    portfolio_id::String=string(UUIDs.uuid1()),
+    broker, initial_cash::Real; name::String="", portfolio_id::String=string(UUIDs.uuid1())
 )
     error_msg = "Not enough cash in the broker $(broker.cash_balances[broker.base_currency])"
     @assert initial_cash <= broker.cash_balances[broker.base_currency] error_msg

@@ -13,12 +13,12 @@ Fields
 - `alpha_model`
 """
 struct PortfolioConstructionModel
-    broker
+    broker::Any
     portfolio_id::String
-    universe
-    order_sizer
-    portfolio_optimizer
-    alpha_model
+    universe::Any
+    order_sizer::Any
+    portfolio_optimizer::Any
+    alpha_model::Any
     #TODO: add risk/cost models
     # risk_model
     # cost_model::CostModel

@@ -17,9 +17,9 @@ Fields
 struct BacktestTradingSession
     start_dt::DateTime
     end_dt::DateTime
-    pcm
-    exec_handler
-    rebalance
+    pcm::Any
+    exec_handler::Any
+    rebalance::Any
     start_tracking_dt::DateTime
     equity_curve::DataFrame
     function BacktestTradingSession(

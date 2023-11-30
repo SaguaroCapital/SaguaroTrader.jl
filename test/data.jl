@@ -34,11 +34,9 @@ end
     @test SaguaroTrader._detect_adj_column(columns, "close") == :adj_close
     @test SaguaroTrader._detect_adj_column(columns, "open") == :adj_open
 
-
     @test SaguaroTrader._detect_adj_column(columns, :close) == :adj_close
     @test SaguaroTrader._detect_adj_column(Symbol.(columns), "close") == :adj_close
     @test SaguaroTrader._detect_adj_column(Symbol.(columns), :close) == :adj_close
-
 end
 
 ########################################################################
@@ -66,4 +64,13 @@ end
     unique_events = SaguaroTrader._get_unique_pricing_events(dh)
     @test size(unique_events, 1) == 9382
     @test size(unique_events) == size(unique(unique_events))
+end
+
+########################################################################
+# Impute
+########################################################################
+@testset "Impute (LOCF)" begin
+    x = [1.0, 2.0, missing, 4.0, 5.0, missing, 7.0]
+    x_imp = SaguaroTrader._impute_locf(x)
+    @test x_imp == [1.0, 2.0, 2.0, 4.0, 5.0, 5.0, 7.0]
 end

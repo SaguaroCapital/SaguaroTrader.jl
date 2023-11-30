@@ -7,7 +7,7 @@ Fields
 - `data_sources
 """
 struct BacktestDataHandler <: DataHandler
-    data_sources
+    data_sources::Any
     function BacktestDataHandler(data_sources)
         _verify_unique_assets(data_sources)
         return new(data_sources)

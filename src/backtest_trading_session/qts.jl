@@ -3,11 +3,11 @@
 
 """
 struct QuantTradingSystem
-    universe
-    broker
+    universe::Any
+    broker::Any
     portfolio_id::String
-    alpha_model
-    order_sizer
+    alpha_model::Any
+    order_sizer::Any
     # risk_model #TODO: Implement
     long_only::Bool
     submit_orders::Bool
