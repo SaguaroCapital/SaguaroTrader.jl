@@ -16,8 +16,9 @@ Returns
 """
 struct ZeroSlippageModel <: SlippageModel end
 
-function (slippage_model::ZeroSlippageModel)(direction::Int; price::Float64=0.0,
-                                             volume::Float64=0.0, order_quantity::Real=0.0)
+function (slippage_model::ZeroSlippageModel)(
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
+)
     return price
 end
 
@@ -39,8 +40,9 @@ struct FixedSlippageModel <: SlippageModel
     spread::Float64
 end
 
-function (slippage_model::FixedSlippageModel)(direction::Int; price::Float64=0.0,
-                                              volume::Float64=0.0, order_quantity::Real=0.0)
+function (slippage_model::FixedSlippageModel)(
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
+)
     return price + (slippage_model.spread / 2.0) * direction
 end
 
@@ -62,9 +64,9 @@ struct PercentSlippageModel <: SlippageModel
     slippage_pct::Float64
 end
 
-function (slippage_model::PercentSlippageModel)(direction::Int; price::Float64=0.0,
-                                                volume::Float64=0.0,
-                                                order_quantity::Real=0.0)
+function (slippage_model::PercentSlippageModel)(
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
+)
     return price + ((slippage_model.slippage_pct / 100) * price / 2.0) * direction
 end
 
@@ -86,9 +88,9 @@ struct VolumeSharesSlippageModel <: SlippageModel
     price_impact::Float64
 end
 
-function (slippage_model::VolumeSharesSlippageModel)(direction::Int; price::Float64=0.0,
-                                                     volume::Float64=0.0,
-                                                     order_quantity::Real=0.0)
+function (slippage_model::VolumeSharesSlippageModel)(
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
+)
     volume_share = order_quantity / volume
     simulated_impact = volume_share^2 * slippage_model.price_impact * price * direction
     return price + simulated_impact

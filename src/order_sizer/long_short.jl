@@ -16,8 +16,9 @@ struct LongShortOrderSizer <: OrderSizer
     end
 end
 
-function (order_sizer::LongShortOrderSizer)(broker, portfolio_id::String, weights::Dict,
-                                            dt::DateTime)
+function (order_sizer::LongShortOrderSizer)(
+    broker, portfolio_id::String, weights::Dict, dt::DateTime
+)
     portfolio_equity = total_equity(broker.portfolios[portfolio_id])
 
     # no weights
@@ -34,8 +35,9 @@ function (order_sizer::LongShortOrderSizer)(broker, portfolio_id::String, weight
             @warn "Unable to get price of asset $asset at $dt. Setting quantity to 0."
             asset_quantity = 0
         else
-            asset_quantity = _calculate_asset_quantity(broker.fee_model, dollar_weight,
-                                                       price)
+            asset_quantity = _calculate_asset_quantity(
+                broker.fee_model, dollar_weight, price
+            )
         end
         target_portfolio[asset] = asset_quantity
     end

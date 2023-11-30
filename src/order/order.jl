@@ -21,11 +21,13 @@ struct Order
     direction::Int
     volume::Float64
     # type::Symbol #TODO: add order types (market, limit, ...)
-    function Order(order_dt::DateTime,
-                   quantity::Real,
-                   asset::Asset;
-                   fee::Float64=0.0,
-                   order_id::String=generate_id())
+    function Order(
+        order_dt::DateTime,
+        quantity::Real,
+        asset::Asset;
+        fee::Float64=0.0,
+        order_id::String=generate_id(),
+    )
         direction = sign(quantity)
         return new(order_dt, quantity, asset, fee, order_id, direction)
     end

@@ -62,16 +62,18 @@ function position_from_transaction(txn::Transaction)
         sell_fee = txn.fee
     end
 
-    return Position(txn.asset,
-                    txn.price,
-                    txn.dt,
-                    buy_quantity,
-                    sell_quantity,
-                    net_quantity,
-                    avg_bought,
-                    avg_sold,
-                    buy_fee,
-                    sell_fee)
+    return Position(
+        txn.asset,
+        txn.price,
+        txn.dt,
+        buy_quantity,
+        sell_quantity,
+        net_quantity,
+        avg_bought,
+        avg_sold,
+        buy_fee,
+        sell_fee,
+    )
 end
 
 """
@@ -330,15 +332,17 @@ function update_current_price!(pos::Position, market_price::Float64, dt::DateTim
 end
 
 function buy!(pos::Position, quantity::Float64, price::Float64, fee::Float64)
-    pos.avg_bought = ((pos.avg_bought * pos.buy_quantity) + (quantity * price)) /
-                     (pos.buy_quantity + quantity)
+    pos.avg_bought =
+        ((pos.avg_bought * pos.buy_quantity) + (quantity * price)) /
+        (pos.buy_quantity + quantity)
     pos.buy_quantity += quantity
     return pos.buy_fee += fee
 end
 
 function sell!(pos::Position, quantity::Float64, price::Float64, fee::Float64)
-    pos.avg_sold = ((pos.avg_sold * pos.sell_quantity) + (quantity * price)) /
-                   (pos.sell_quantity + quantity)
+    pos.avg_sold =
+        ((pos.avg_sold * pos.sell_quantity) + (quantity * price)) /
+        (pos.sell_quantity + quantity)
     pos.sell_quantity += quantity
     return pos.sell_fee += fee
 end

@@ -30,12 +30,14 @@ struct Transaction
     )
     ```
     """
-    function Transaction(asset::Asset,
-                         quantity::Real,
-                         dt::DateTime,
-                         price::Float64,
-                         fee::Float64,
-                         order_id::String=generate_id())
+    function Transaction(
+        asset::Asset,
+        quantity::Real,
+        dt::DateTime,
+        price::Float64,
+        fee::Float64,
+        order_id::String=generate_id(),
+    )
         return new(asset, float(quantity), dt, price, fee, order_id)
     end
 end

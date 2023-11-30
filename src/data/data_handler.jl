@@ -99,9 +99,9 @@ function get_asset_latest_mid_price(dh::DataHandler, dt::DateTime, asset::Symbol
     return (bid + ask) / 2.0
 end
 
-function get_assets_historical_range_close_price(dh::DataHandler, start_dt::DateTime,
-                                                 end_dt::DateTime,
-                                                 assets::AbstractVector{Symbol})
+function get_assets_historical_range_close_price(
+    dh::DataHandler, start_dt::DateTime, end_dt::DateTime, assets::AbstractVector{Symbol}
+)
     df_prices = DataFrame(; timestamp=Vector{DateTime})
     for ds in dh.data_sources
         df_prices_temp = get_assets_historical_bids(ds, start_dt, end_dt, assets)
@@ -116,13 +116,14 @@ end
 Get a vector of all unique days where
 pricing data exists
 """
-function _get_unique_pricing_events(dh::DataHandler, start_dt::DateTime=DateTime(1900),
-                                    end_dt::DateTime=DateTime(2100))
+function _get_unique_pricing_events(
+    dh::DataHandler, start_dt::DateTime=DateTime(1900), end_dt::DateTime=DateTime(2100)
+)
     df_events = DataFrame(; timestamp=Vector{DateTime}(), event_type=Vector{Symbol}())
     for ds in dh.data_sources
         df_ds_events = _get_unique_pricing_events(ds)
-        time_mask = (df_ds_events.timestamp .>= start_dt) .&
-                    (df_ds_events.timestamp .<= end_dt)
+        time_mask =
+            (df_ds_events.timestamp .>= start_dt) .& (df_ds_events.timestamp .<= end_dt)
         df_ds_events = df_ds_events[time_mask, :]
         df_events = unique(vcat(df_events, df_ds_events))
     end

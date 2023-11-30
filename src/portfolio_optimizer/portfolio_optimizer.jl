@@ -18,8 +18,9 @@ struct FixedWeightPortfolioOptimizer <: PortfolioOptimizer
     data_handler::DataHandler
 end
 
-function generate_weights(opt::FixedWeightPortfolioOptimizer,
-                          initial_weights::Dict{Symbol,Float64})
+function generate_weights(
+    opt::FixedWeightPortfolioOptimizer, initial_weights::Dict{Symbol,Float64}
+)
     return initial_weights
 end
 
@@ -39,8 +40,9 @@ struct EqualWeightPortfolioOptimizer <: PortfolioOptimizer
     end
 end
 
-function generate_weights(opt::EqualWeightPortfolioOptimizer,
-                          initial_weights::Dict{Symbol,Float64})
+function generate_weights(
+    opt::EqualWeightPortfolioOptimizer, initial_weights::Dict{Symbol,Float64}
+)
     assets = keys(initial_weights)
     n_assets = length(assets)
     equal_weight = 1.0 / n_assets

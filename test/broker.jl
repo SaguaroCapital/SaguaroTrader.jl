@@ -2,8 +2,9 @@
 @testset "Broker" begin
     ds = CSVDailyBarSource("./test_data")
     dh = BacktestDataHandler([ds])
-    broker = SimulatedBroker(DateTime(2020), SimulatedExchange(DateTime(2020)), dh;
-                             initial_cash=100_000.0)
+    broker = SimulatedBroker(
+        DateTime(2020), SimulatedExchange(DateTime(2020)), dh; initial_cash=100_000.0
+    )
     create_portfolio!(broker, 75_000; portfolio_id="test_port")
     @test broker.cash_balances[broker.base_currency] == 25_000.0
     create_portfolio!(broker; portfolio_id="test_port2")

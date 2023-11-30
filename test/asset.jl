@@ -6,10 +6,12 @@
     @test assets == SaguaroTrader._get_assets(uni)
 
     # dynamic universe
-    assets = Dict(Equity(:AMD) => Date(2020, 1, 1),
-                  Equity(:INTC) => Date(2020, 6, 1),
-                  Equity(:NVDA) => Date(2019, 3, 31),
-                  Cash() => Date(2019, 1, 1))
+    assets = Dict(
+        Equity(:AMD) => Date(2020, 1, 1),
+        Equity(:INTC) => Date(2020, 6, 1),
+        Equity(:NVDA) => Date(2019, 3, 31),
+        Cash() => Date(2019, 1, 1),
+    )
     uni = DynamicUniverse(assets)
     res = SaguaroTrader._get_assets(uni, Date(2022, 1, 1))
     @test all(in(res).([Equity(:AMD), Equity(:INTC), Equity(:NVDA), Cash()]))

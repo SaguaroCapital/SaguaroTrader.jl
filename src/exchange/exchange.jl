@@ -17,16 +17,17 @@ struct SimulatedExchange <: Exchange
     start_dt::DateTime
     open_time::Time
     close_time::Time
-    function SimulatedExchange(start_dt; open_time::Time=Time(14, 30),
-                               close_time::Time=Time(21, 00))
+    function SimulatedExchange(
+        start_dt; open_time::Time=Time(14, 30), close_time::Time=Time(21, 00)
+    )
         return new(start_dt, open_time, close_time)
     end
 end
 
 function is_open(exchange::SimulatedExchange, dt::DateTime)
     if (dt > exchange.start_dt) &# check if the exchage is active
-       (Time(dt) >= exchange.open_time) &
-       (Time(dt) < exchange.close_time) #check if exchange is open
+        (Time(dt) >= exchange.open_time) &
+        (Time(dt) < exchange.close_time) #check if exchange is open
         return true
     else
         return false

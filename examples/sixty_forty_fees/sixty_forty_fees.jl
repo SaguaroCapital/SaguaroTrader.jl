@@ -29,8 +29,9 @@ fee_model = PercentFeeModel(; fee_pct=0.1 / 100, tax_pct=0.5 / 100)
 
 # create exchange, broker
 exchange = SimulatedExchange(start_dt)
-broker = SimulatedBroker(start_dt, exchange, data_handler; initial_cash=initial_cash,
-                         fee_model=fee_model)
+broker = SimulatedBroker(
+    start_dt, exchange, data_handler; initial_cash=initial_cash, fee_model=fee_model
+)
 
 #####################################################
 # 60% SPY, 40% AAG (bonds)
@@ -49,15 +50,17 @@ order_sizer = DollarWeightedOrderSizer(0.001)
 rebalance = BuyAndHoldRebalance(Date(start_dt))
 
 # Run 60/40 backtest
-strategy_trading_session = BacktestTradingSession(start_dt,
-                                                  end_dt,
-                                                  universe,
-                                                  broker,
-                                                  alpha_model,
-                                                  rebalance,
-                                                  portfolio_id,
-                                                  order_sizer,
-                                                  port_optimizer)
+strategy_trading_session = BacktestTradingSession(
+    start_dt,
+    end_dt,
+    universe,
+    broker,
+    alpha_model,
+    rebalance,
+    portfolio_id,
+    order_sizer,
+    port_optimizer,
+)
 run!(strategy_trading_session)
 
 #####################################################
@@ -79,21 +82,25 @@ order_sizer = DollarWeightedOrderSizer(0.001)
 rebalance = BuyAndHoldRebalance(Date(start_dt))
 
 # Run SPY backtest
-benchmark_trading_session = BacktestTradingSession(start_dt,
-                                                   end_dt,
-                                                   universe,
-                                                   broker,
-                                                   alpha_model,
-                                                   rebalance,
-                                                   portfolio_id,
-                                                   order_sizer,
-                                                   port_optimizer)
+benchmark_trading_session = BacktestTradingSession(
+    start_dt,
+    end_dt,
+    universe,
+    broker,
+    alpha_model,
+    rebalance,
+    portfolio_id,
+    order_sizer,
+    port_optimizer,
+)
 run!(benchmark_trading_session)
 
 #####################################################
 # Plot results
 ######################################################
-plt_tearsheet = SaguaroTraderResults.plot_tearsheet(strategy_trading_session,
-                                                    benchmark_trading_session;
-                                                    title="60/40 with Fees Backtest Results vs S&P 500")
+plt_tearsheet = SaguaroTraderResults.plot_tearsheet(
+    strategy_trading_session,
+    benchmark_trading_session;
+    title="60/40 with Fees Backtest Results vs S&P 500",
+)
 savefig(plt_tearsheet, "./sixty_forty_fees.png")

@@ -7,11 +7,13 @@ using Dates
 using MarketData
 using SaguaroTrader
 
-function SaguaroTrader.download_market_data(security::Symbol,
-                                            data_dir::String="./temp/";
-                                            start_dt::DateTime=DateTime(1990, 1, 1),
-                                            end_dt::DateTime=DateTime(2040, 1, 1),
-                                            check_exists::Bool=false)
+function SaguaroTrader.download_market_data(
+    security::Symbol,
+    data_dir::String="./temp/";
+    start_dt::DateTime=DateTime(1990, 1, 1),
+    end_dt::DateTime=DateTime(2040, 1, 1),
+    check_exists::Bool=false,
+)
     if check_exists
         if isfile(joinpath(data_dir, "$security.csv"))
             df = CSV.read(joinpath(data_dir, "$security.csv"), DataFrame)
@@ -29,11 +31,13 @@ function SaguaroTrader.download_market_data(security::Symbol,
     return nothing
 end
 
-function SaguaroTrader.download_market_data(securities::AbstractVector{Symbol},
-                                            data_dir::String="./temp/";
-                                            start_dt::DateTime=DateTime(1990, 1, 1),
-                                            end_dt::DateTime=DateTime(2040, 1, 1),
-                                            check_exists::Bool=false)
+function SaguaroTrader.download_market_data(
+    securities::AbstractVector{Symbol},
+    data_dir::String="./temp/";
+    start_dt::DateTime=DateTime(1990, 1, 1),
+    end_dt::DateTime=DateTime(2040, 1, 1),
+    check_exists::Bool=false,
+)
     if !isdir(data_dir)
         mkdir(data_dir)
     end
