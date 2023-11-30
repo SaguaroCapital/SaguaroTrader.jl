@@ -31,7 +31,7 @@ function _load_csv_into_df(
 end
 
 function _load_csvs_into_dfs(
-    csv_files::Vector{String},
+    csv_files::AbstractVector{String},
     adjust_prices::Bool=false,
     market_open::Dates.CompoundPeriod=Hour(14) + Minute(30),
     market_close::Dates.CompoundPeriod=Hour(21) + Minute(59),
@@ -60,13 +60,13 @@ function _load_csvs_into_dfs(
     return dict_asset_dfs
 end
 
-function _detect_adj_column(columns::Vector{String}, identifier::String)
+function _detect_adj_column(columns::AbstractVector{String}, identifier::String)
     identifier = lowercase(identifier)
     for col in columns
         col_lowered = lowercase(col)
         if occursin("adj", col_lowered)
             if occursin(identifier, col_lowered)
-                return col
+                return Symbol(col)
             end
         end
     end
@@ -75,11 +75,15 @@ function _detect_adj_column(columns::Vector{String}, identifier::String)
     for col in columns
         col_lowered = lowercase(col)
         if identifier == col_lowered
-            return col
+            return Symbol(col)
         end
     end
     return error("Unable to detect '$identifier' column in columns: $columns")
 end
+
+_detect_adj_column(columns::AbstractVector{Symbol}, identifier::String) = _detect_adj_column(string.(columns), identifier)
+_detect_adj_column(columns::AbstractVector{String}, identifier::Symbol) = _detect_adj_column(columns, string(identifier))
+_detect_adj_column(columns::AbstractVector{Symbol}, identifier::Symbol) = _detect_adj_column(string.(columns), string(identifier))
 
 """
 Estimate Bid-Ask spreads from OHLCV data
@@ -188,7 +192,7 @@ struct CSVDailyBarSource <: DataSource
     csv_dir::String
     asset_type::DataType
     adjust_prices::Bool
-    assets::Vector{Asset}
+    assets::AbstractVector{Asset}
     dict_asset_dfs::Dict{Symbol,DataFrame}
     csv_symbols::Union{Nothing,Vector{Symbol}}
     market_open::Dates.CompoundPeriod
@@ -244,7 +248,7 @@ end
 
 function get_bid(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
     df_bid_ask = ds.dict_asset_dfs[asset]
-    ix = searchsortedfirst(df_bid_ask.timestamp::Vector{DateTime}, dt)::Int64
+    ix = searchsortedfirst(df_bid_ask.timestamp::AbstractVector{DateTime}, dt)::Int64
     if (ix == 1) || (ix > size(df_bid_ask, 1))
         return NaN
     else
@@ -254,7 +258,7 @@ end
 
 function get_ask(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
     df_bid_ask = ds.dict_asset_dfs[asset]
-    ix = searchsortedfirst(df_bid_ask.timestamp::Vector{DateTime}, dt)::Int64
+    ix = searchsortedfirst(df_bid_ask.timestamp::AbstractVector{DateTime}, dt)::Int64
     if (ix == 1) || (ix > size(df_bid_ask, 1))
         return NaN
     else
@@ -264,7 +268,7 @@ end
 
 function get_volume(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
     df_bid_ask = ds.dict_asset_dfs[asset]
-    ix = searchsortedfirst(df_bid_ask.timestamp::Vector{DateTime}, dt)::Int64
+    ix = searchsortedfirst(df_bid_ask.timestamp::AbstractVector{DateTime}, dt)::Int64
     if (ix == 1) || (ix > size(df_bid_ask, 1))
         return NaN
     else
@@ -272,7 +276,7 @@ function get_volume(ds::CSVDailyBarSource, dt::DateTime, asset::Symbol)::Float64
     end
 end
 
-function _get_timestamp_start(start_dt::DateTime, v::Vector{DateTime})::keytype(v)
+function _get_timestamp_start(start_dt::DateTime, v::AbstractVector{DateTime})::keytype(v)
     start_ix = findfirst(>=(start_dt), v)
     if start_ix === nothing
         return firstindex(v)
@@ -281,7 +285,7 @@ function _get_timestamp_start(start_dt::DateTime, v::Vector{DateTime})::keytype(
     end
 end
 
-function _get_timestamp_end(end_dt::DateTime, v::Vector{DateTime})::keytype(v)
+function _get_timestamp_end(end_dt::DateTime, v::AbstractVector{DateTime})::keytype(v)
     end_ix = findlast(<=(end_dt), v)
     if end_ix === nothing
         return firstindex(v)
@@ -291,7 +295,7 @@ function _get_timestamp_end(end_dt::DateTime, v::Vector{DateTime})::keytype(v)
 end
 
 function get_assets_historical_bids(
-    ds::CSVDailyBarSource, start_dt::DateTime, end_dt::DateTime, assets::Vector{Symbol}
+    ds::CSVDailyBarSource, start_dt::DateTime, end_dt::DateTime, assets::AbstractVector{Symbol}
 )
     # TODO: do we want historical close like qstrader uses?
     prices_df = DataFrame(; timestamp=Vector{DateTime}())
@@ -301,7 +305,7 @@ function get_assets_historical_bids(
             continue
         end
         df_bid_ask = ds.dict_asset_dfs[asset]
-        timestamp = df_bid_ask.timestamp::Vector{DateTime}
+        timestamp = df_bid_ask.timestamp::AbstractVector{DateTime}
         start_ix = _get_timestamp_start(start_dt, timestamp)
         end_ix = _get_timestamp_end(end_dt, timestamp)
         df_bid_ask_subset = df_bid_ask[start_ix:end_ix, [:timestamp, :Bid]]::DataFrame

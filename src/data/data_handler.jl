@@ -100,7 +100,7 @@ function get_asset_latest_mid_price(dh::DataHandler, dt::DateTime, asset::Symbol
 end
 
 function get_assets_historical_range_close_price(
-    dh::DataHandler, start_dt::DateTime, end_dt::DateTime, assets::Vector{Symbol}
+    dh::DataHandler, start_dt::DateTime, end_dt::DateTime, assets::AbstractVector{Symbol}
 )
     df_prices = DataFrame(; timestamp=Vector{DateTime})
     for ds in dh.data_sources
@@ -212,7 +212,7 @@ get_assets_historical_range_close_price(
     dh::DataHandler,
     start_dt::DateTime,
     end_dt::DateTime,
-    assets::Vector{Symbol},
+    assets::AbstractVector{Symbol},
 )  
 ```
 
@@ -223,7 +223,7 @@ Parameters
 - `dh::DataHandler`
 - `start_dt::DateTime`
 - `end_dt::DateTime`
-- `asset::Vector{Symbol}`
+- `asset::AbstractVector{Symbol}`
 
 Returns
 -------

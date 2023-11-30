@@ -7,13 +7,13 @@ Fields
 - `start_date::Date`
 - `end_date::Date`
 - `market_time::DateTime`
-- `rebalances::Vector{DateTime}`
+- `rebalances::AbstractVector{DateTime}`
 """
 struct DailyRebalance <: Rebalance
     start_date::Date
     end_date::Date
     market_time::Union{Hour,Minute,Dates.CompoundPeriod}
-    rebalances::Vector{DateTime}
+    rebalances::AbstractVector{DateTime}
     function DailyRebalance(
         start_date::Date,
         end_date::Date,

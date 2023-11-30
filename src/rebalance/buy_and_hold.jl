@@ -5,12 +5,12 @@ Only rebalance at the start date
 Fields
 ------
 - `start_dt::DateTime`
-- `rebalances::Vector{DateTime}`
+- `rebalances::AbstractVector{DateTime}`
 """
 struct BuyAndHoldRebalance <: Rebalance
     start_date::DateTime
     end_date::DateTime
-    rebalances::Vector{DateTime}
+    rebalances::AbstractVector{DateTime}
     function BuyAndHoldRebalance(start_dt::DateTime)
         return new(Date(start_dt), Date(start_dt), [start_dt])
     end

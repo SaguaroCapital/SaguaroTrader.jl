@@ -20,7 +20,7 @@ Dynamic asset universe. Each asset has a start date
 
 Parameters
 ----------
-- `asset_dates::Vector{Dict{Symbol,DateTime}}`
+- `asset_dates::AbstractVector{Dict{Symbol,DateTime}}`
 """
 struct DynamicUniverse <: Universe
     asset_dates::Dict{Asset,DateTime}
@@ -46,7 +46,7 @@ Returns
 -------
 - `Vector{Asset}`
 """
-function _get_assets(uni::DynamicUniverse, dt)::Vector{Asset}
+function _get_assets(uni::DynamicUniverse, dt)::AbstractVector{Asset}
     return Vector{Asset}([
         asset for (asset, asset_date) in uni.asset_dates if asset_date < dt
     ])
