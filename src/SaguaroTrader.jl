@@ -1,11 +1,13 @@
 module SaguaroTrader
 
-using CSV
-using DataFrames
-using Dates
-using DataStructures
-using Random
-using UUIDs
+using CSV: CSV
+using DataFrames:
+    DataFrames, DataFrame, dropmissing!, order, outerjoin, select, select!, transform
+using DataStructures: DataStructures, Queue, dequeue!, enqueue!
+using Dates: Dates, Date, DateTime, Day, Hour, Minute, Month, Time, Week, Year, dayofweek
+using PrecompileTools: PrecompileTools, @compile_workload, @setup_workload
+using Random: Random
+using UUIDs: UUIDs
 
 include("utils.jl")
 include("asset/asset.jl")
