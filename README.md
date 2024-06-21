@@ -34,5 +34,6 @@ Pkg> add https://github.com/SaguaroCapital/SaguaroTrader.jl/
 # Other Julia Backtesting Libraries
 
 - [Bruno.jl](https://github.com/USU-Analytics-Solution-Center/Bruno.jl) - A modular, flexible package for simulating financial data, asset pricing, and trading strategy testing.
+- [Lucky.jl](https://github.com/oliviermilla/Lucky.jl) - A reactive and async trading framework in Julia designed to rapidly draft, test, deploy and monitor trading strategies and portfolios. 
 - [PingPong.jl](https://github.com/panifie/PingPong.jl) - Cryptocurrency trading bot, and backtesting framework.
 - [Trading.jl](https://github.com/louisponet/Trading.jl) - An event-driven framework for defining and executing and backtesting trading strategies based on technical indicators.
