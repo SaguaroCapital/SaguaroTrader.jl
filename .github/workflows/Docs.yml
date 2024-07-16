@@ -1,26 +1,28 @@
 name: Documentation
-
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - 'main'
-      - 'release-'
+    branches: [main]
     tags: '*'
+    paths:
+      - '.github/workflows/Docs.yml'
+      - 'src/**'
+      - 'docs/**'
   pull_request:
-  release:
-    types: [published]
-
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/docs.yml'
+      - 'src/**'
+      - 'docs/**'
 jobs:
-  build:
+  Documentation:
     runs-on: ubuntu-latest
-    env:
-      PYTHON: ""
     steps:
-      - uses: actions/checkout@v3
-      - uses: julia-actions/cache@v1 # https://github.com/julia-actions/cache
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-      - name: Build and deploy
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: 1.6 # earliest supported version
+      - uses: julia-actions/cache@v2 # https://github.com/julia-actions/cache
+      - uses: julia-actions/julia-docdeploy@releases/v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: julia --project=docs/ docs/make.jl
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For authentication with GitHub Actions 
