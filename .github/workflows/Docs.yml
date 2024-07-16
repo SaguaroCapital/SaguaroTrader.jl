@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@latest
         with:
-          version: 1.6 # earliest supported version
+          version: 1
       - uses: julia-actions/cache@v2 # https://github.com/julia-actions/cache
       - uses: julia-actions/julia-docdeploy@releases/v1
         env:
