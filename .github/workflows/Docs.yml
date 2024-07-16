@@ -15,14 +15,28 @@ on:
       - 'src/**'
       - 'docs/**'
 jobs:
-  Documentation:
+  docs:
+    name: Documentation
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read  # Required when using `push_preview=true`
+      statuses: write
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@latest
+      - uses: julia-actions/setup-julia@v1
         with:
-          version: 1
-      - uses: julia-actions/cache@v2 # https://github.com/julia-actions/cache
-      - uses: julia-actions/julia-docdeploy@releases/v1
+          version: '1'
+      - name: Configure doc environment
+        shell: julia --project=docs --color=yes {0}
+        run: |
+          using Pkg
+          Pkg.develop(PackageSpec(path=pwd()))
+          Pkg.instantiate()
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-docdeploy@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For authentication with GitHub Actions 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run doctests
+        shell: julia --project=docs --color=yes {0}
+        run: docs/make.jl
