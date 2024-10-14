@@ -20,7 +20,7 @@ MarketDataExt = "MarketData"
 
 [compat]
 Aqua = "0.8.4"
-CSV = "0.10"
+CSV = "0.10.13"
 DataFrames = "1"
 DataStructures = "0.18"
 Dates = "<0.0.1, 1"
