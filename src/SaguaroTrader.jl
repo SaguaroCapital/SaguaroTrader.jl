@@ -10,22 +10,21 @@ using Random: Random
 using UUIDs: UUIDs
 
 include("utils.jl")
-include("asset/asset.jl")
-include("order/order.jl")
-include("fee_model/fee_model.jl")
-include("exchange/exchange.jl")
+include("asset.jl")
+include("order.jl")
+include("fee_model.jl")
+include("exchange.jl")
 include("data/data.jl")
-include("data/impute.jl")
 include("portfolio/portfolio.jl")
 include("portfolio_optimizer/portfolio_optimizer.jl")
 include("slippage_model/slippage_model.jl")
 
-include("alpha_model/alpha_model.jl")
-include("risk_model/risk_model.jl")
-include("rebalance/rebalance.jl")
+include("alpha_model.jl")
+include("risk_model.jl")
+include("rebalance.jl")
 
-include("broker/broker.jl")
-include("order_sizer/order_sizer.jl")
+include("broker.jl")
+include("order_sizer.jl")
 include("execution/execution.jl")
 include("portfolio_construction_model/portfolio_construction_model.jl")
 include("backtest_trading_session/backtest_trading_session.jl")
@@ -41,7 +40,7 @@ end
 export
 
     # asset
-    Asset,
+    AbstractAsset,
     Cash,
     Equity,
     Universe,
@@ -52,25 +51,25 @@ export
     Order,
 
     # exchange
-    Exchange,
+    AbstractExchange,
     SimulatedExchange,
     AlwaysOpenExchange,
 
     # fee model
-    FeeModel,
+    AbstractFeeModel,
     ZeroFeeModel,
     PercentFeeModel,
     calculate_fee,
 
     # data source
-    DataSource,
+    AbstractDataSource,
     CSVDailyBarSource,
     get_bid,
     get_ask,
     get_assets_historical_bids,
 
     # data handler
-    DataHandler,
+    AbstractDataHandler,
     BacktestDataHandler,
     get_asset_latest_bid_ask_price,
     get_asset_latest_mid_price,
@@ -92,24 +91,25 @@ export
     total_equity,
 
     # alpha model
-    AlphaModel,
+    AbstractAlphaModel,
     FixedSignalsAlphaModel,
     RollingSignalsAlphaModel,
     SingleSignalAlphaModel,
 
     # slippage model
-    SlippageModel,
+    AbstractSlippageModel,
     ZeroSlippageModel,
     FixedSlippageModel,
     PercentSlippageModel,
     VolumeSharesSlippageModel,
 
     # portfolio optimizer
-    PortfolioOptimizer,
+    AbstractPortfolioOptimizer,
     FixedWeightPortfolioOptimizer,
     EqualWeightPortfolioOptimizer,
 
     # broker
+    AbstractBroker,
     SimulatedBroker,
     create_portfolio!,
     subscribe_funds!,
@@ -118,7 +118,7 @@ export
     withdraw_funds_from_portfolio!,
 
     # order sizer
-    OrderSizer,
+    AbstractOrderSizer,
     DollarWeightedOrderSizer,
     LongShortOrderSizer,
 
@@ -126,7 +126,7 @@ export
     PortfolioConstructionModel,
 
     # rebalance
-    Rebalance,
+    AbstractRebalance,
     BuyAndHoldRebalance,
     DailyRebalance,
     WeeklyRebalance,

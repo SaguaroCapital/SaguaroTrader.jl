@@ -15,7 +15,7 @@ Fields
 - `sell_fee::Float64`
 """
 mutable struct Position
-    asset::Asset
+    asset::AbstractAsset
     current_price::Float64
     current_dt::DateTime
     buy_quantity::Float64

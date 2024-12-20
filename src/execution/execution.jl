@@ -7,19 +7,19 @@ a vector of orders through the `Broker`.
 
 Fields
 ------
-- `broker::Broker`
+- `broker::AbstractBroker`
 - `portfolio_id::String`
 - `execution_algorithm::ExecutionAlgorithm`
-- `data_handler::DataHandler`
+- `data_handler::AbstractDataHandler`
 - `submit_orders::Bool`
 """
 struct ExecutionHandler
-    broker::Broker
+    broker::AbstractBroker
     portfolio_id::String
     execution_algorithm::ExecutionAlgorithm
     submit_orders::Bool
     function ExecutionHandler(
-        broker::Broker,
+        broker::AbstractBroker,
         portfolio_id::String;
         execution_algorithm::ExecutionAlgorithm=MarketOrderExecutionAlgorithm(),
         submit_orders::Bool=false,

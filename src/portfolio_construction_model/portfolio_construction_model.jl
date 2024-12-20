@@ -13,12 +13,12 @@ Fields
 - `alpha_model`
 """
 struct PortfolioConstructionModel
-    broker::Any
+    broker::AbstractBroker
     portfolio_id::String
-    universe::Any
-    order_sizer::Any
-    portfolio_optimizer::Any
-    alpha_model::Any
+    universe::Universe
+    order_sizer::AbstractOrderSizer
+    portfolio_optimizer::AbstractPortfolioOptimizer
+    alpha_model::AbstractAlphaModel
     #TODO: add risk/cost models
     # risk_model
     # cost_model::CostModel
@@ -36,11 +36,11 @@ end
 
 function _create_rebalance_orders(
     current_positions::Dict{Symbol,Position},
-    target_positions::Dict{Asset,Int},
+    target_positions::Dict{AbstractAsset,Int},
     dt::DateTime,
 )
     target_positions_assets = keys(target_positions)
-    rebalance_orders_dict = Dict{Asset,Order}()
+    rebalance_orders_dict = Dict{AbstractAsset,Order}()
     for (_, position) in current_positions
         if !(position.asset in target_positions_assets)
             rebalance_orders_dict[position.asset] = Order(

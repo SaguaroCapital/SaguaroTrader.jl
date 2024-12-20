@@ -10,7 +10,7 @@ CurrentModule = SaguaroTrader
 
 # Asset
 ```@docs
-Asset
+AbstractAsset
 Cash
 Equity
 Universe
@@ -25,21 +25,21 @@ Order
 
 # Portfolio Optimization
 ```@docs
-PortfolioOptimizer
+AbstractPortfolioOptimizer
 FixedWeightPortfolioOptimizer
 EqualWeightPortfolioOptimizer
 ```
 
 # Exchange 
 ```@docs
-Exchange
+AbstractExchange
 SimulatedExchange
 AlwaysOpenExchange
 ```
 
 # Fee Model
 ```@docs
-FeeModel
+AbstractFeeModel
 ZeroFeeModel
 PercentFeeModel
 calculate_fee
@@ -47,7 +47,7 @@ calculate_fee
 
 # Data Source
 ```@docs
-DataSource
+AbstractDataSource
 CSVDailyBarSource
 get_bid
 get_ask
@@ -56,7 +56,7 @@ get_assets_historical_bids
 
 # Data Handler
 ```@docs
-DataHandler
+AbstractDataHandler
 BacktestDataHandler
 get_asset_latest_bid_ask_price
 get_asset_latest_mid_price
@@ -90,7 +90,7 @@ total_equity
 
 # Alpha Model
 ```@docs
-AlphaModel
+AbstractAlphaModel
 FixedSignalsAlphaModel
 RollingSignalsAlphaModel
 SingleSignalAlphaModel
@@ -98,7 +98,7 @@ SingleSignalAlphaModel
 
 # Slippage Model
 ```@docs
-SlippageModel
+AbstractSlippageModel
 ZeroSlippageModel
 FixedSlippageModel
 PercentSlippageModel
@@ -107,7 +107,7 @@ VolumeSharesSlippageModel
 
 # Broker
 ```@docs
-Broker
+AbstractBroker
 SimulatedBroker
 create_portfolio!
 subscribe_funds!
@@ -118,7 +118,7 @@ withdraw_funds_from_portfolio!
 
 # Order Sizer
 ```@docs
-OrderSizer
+AbstractOrderSizer
 DollarWeightedOrderSizer
 LongShortOrderSizer
 ```
@@ -130,7 +130,7 @@ PortfolioConstructionModel
 
 # Rebalance
 ```@docs
-Rebalance
+AbstractRebalance
 BuyAndHoldRebalance
 DailyRebalance
 MonthlyRebalance

@@ -4,7 +4,7 @@ Metadata about a transaction of an asset
 
 Fields
 ------
-- `asset::Symbol`
+- `asset::AbstractAsset`
 - `quantity::Float64`
 - `dt::DateTime`
 - `price::Float64`
@@ -12,7 +12,7 @@ Fields
 - `order_id::String`
 """
 struct Transaction
-    asset::Asset
+    asset::AbstractAsset
     quantity::Float64
     dt::DateTime
     price::Float64
@@ -21,7 +21,7 @@ struct Transaction
     """
     ```julia
     Transaction(
-        asset::Asset,
+        asset::AbstractAsset,
         quantity::Float64,
         dt::DateTime,
         price::Float64,
@@ -31,7 +31,7 @@ struct Transaction
     ```
     """
     function Transaction(
-        asset::Asset,
+        asset::AbstractAsset,
         quantity::Real,
         dt::DateTime,
         price::Float64,

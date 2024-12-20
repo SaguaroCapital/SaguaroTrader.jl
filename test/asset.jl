@@ -18,5 +18,5 @@
     res = SaguaroTrader._get_assets(uni, Date(2019, 5, 1))
     @test all(in(res).([Equity(:NVDA), Cash()]))
     @test [Cash()] == SaguaroTrader._get_assets(uni, Date(2019, 2, 1))
-    @test Vector{Asset}() == SaguaroTrader._get_assets(uni, Date(2018, 1, 1))
+    @test Vector{AbstractAsset}() == SaguaroTrader._get_assets(uni, Date(2018, 1, 1))
 end

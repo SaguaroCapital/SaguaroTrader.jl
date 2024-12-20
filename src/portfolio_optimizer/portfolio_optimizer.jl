@@ -5,17 +5,25 @@ Abstract type for portfolio optimization.
 generate_weights(opt, initial_weights)
 ```
 """
-abstract type PortfolioOptimizer end
+abstract type AbstractPortfolioOptimizer end
+
+function generate_weights(
+    opt::AbstractPortfolioOptimizer, initial_weights::Dict{Symbol,Float64}
+)
+    return error(
+        "generate_weights not implemented for portfolio optimizer type $(typeof(opt))"
+    )
+end
 
 """
 Portfolio optimizer for fixed asset weights
 
 Fields
 ------
-- `data_handler::DataHandler`
+- `data_handler::AbstractDataHandler`
 """
-struct FixedWeightPortfolioOptimizer <: PortfolioOptimizer
-    data_handler::DataHandler
+struct FixedWeightPortfolioOptimizer <: AbstractPortfolioOptimizer
+    data_handler::AbstractDataHandler
 end
 
 function generate_weights(
@@ -29,13 +37,15 @@ Portfolio optimizer for fixed asset weights
 
 Fields
 ------
-- `data_handler::DataHandler`
+- `data_handler::AbstractDataHandler`
 - `scale::Float64`
 """
-struct EqualWeightPortfolioOptimizer <: PortfolioOptimizer
-    data_handler::DataHandler
+struct EqualWeightPortfolioOptimizer <: AbstractPortfolioOptimizer
+    data_handler::AbstractDataHandler
     scale::Float64
-    function EqualWeightPortfolioOptimizer(data_handler::DataHandler, scale::Float64=1.0)
+    function EqualWeightPortfolioOptimizer(
+        data_handler::AbstractDataHandler, scale::Float64=1.0
+    )
         return new(data_handler, scale)
     end
 end

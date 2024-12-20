@@ -6,7 +6,7 @@ Fields
 ------
 - `created_dt::DateTime` - datetime that the order was placed
 - `quantity::Real` - order quantity 
-- `asset::Asset` - order asset
+- `asset::AbstractAsset` - order asset
 - `fee::Float64` - order fee
 - `order_id::String` - unique order id
 - `direction::Int`  1=>buy, -1=>sell
@@ -15,7 +15,7 @@ Fields
 struct Order
     created_dt::DateTime
     quantity::Real
-    asset::Asset
+    asset::AbstractAsset
     fee::Float64
     order_id::String
     direction::Int
@@ -24,7 +24,7 @@ struct Order
     function Order(
         order_dt::DateTime,
         quantity::Real,
-        asset::Asset;
+        asset::AbstractAsset;
         fee::Float64=0.0,
         order_id::String=generate_id(),
     )

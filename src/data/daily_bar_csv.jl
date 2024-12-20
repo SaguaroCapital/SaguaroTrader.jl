@@ -194,11 +194,11 @@ Fields
     Automatically generated dictionary of asset symbols, and 
     pricing dataframes
 """
-struct CSVDailyBarSource <: DataSource
+struct CSVDailyBarSource <: AbstractDataSource
     csv_dir::String
     asset_type::DataType
     adjust_prices::Bool
-    assets::AbstractVector{Asset}
+    assets::AbstractVector{AbstractAsset}
     dict_asset_dfs::Dict{Symbol,DataFrame}
     csv_symbols::Union{Nothing,Vector{Symbol}}
     market_open::Dates.CompoundPeriod

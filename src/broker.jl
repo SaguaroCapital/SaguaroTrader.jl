@@ -1,31 +1,37 @@
 
 """
+Broker
+"""
+abstract type AbstractBroker end
+
+"""
 Simlated broker for transacting assets
 
 Fields
 ------
 - `start_dt::DateTime`
 - `current_dt::DateTime`
-- `exchange`
-- `data_handler::DataHandler`
+- `exchange::AbstractExchange`
+- `data_handler::AbstractDataHandler`
 - `account_id::String`
 - `base_currency::String`
 - `initial_cash::Float64`
-- `fee_model`
+- `fee_model::AbstractFeeModel`
+- `slippage_model::AbstractSlippageModel`
 - `cash_balances::Dict{String,Float64}`
 - `portfolios::Dict{String,Portfolio}`
 - `open_orders::Dict{String,Queue{Order}}`
 """
-mutable struct SimulatedBroker <: Broker
+mutable struct SimulatedBroker <: AbstractBroker
     start_dt::DateTime
     current_dt::DateTime
-    exchange::Any
-    data_handler::DataHandler
+    exchange::AbstractExchange
+    data_handler::AbstractDataHandler
     account_id::String
     base_currency::String
     initial_cash::Float64
-    fee_model::Any
-    slippage_model::Any
+    fee_model::AbstractFeeModel
+    slippage_model::AbstractSlippageModel
     # market_impact_model::AbstractMarketImpactModel # TODO: Implement
     cash_balances::Dict{String,Float64}
     portfolios::Dict{String,Portfolio}
@@ -34,7 +40,7 @@ mutable struct SimulatedBroker <: Broker
     function SimulatedBroker(
         start_dt::DateTime,
         exchange,
-        data_handler::DataHandler;
+        data_handler::AbstractDataHandler;
         account_id::String="",
         base_currency::String="USD",
         initial_cash::Float64=0.0,
@@ -64,17 +70,17 @@ mutable struct SimulatedBroker <: Broker
     end
 end
 
-function subscribe_funds!(broker, amount::Real)
+function subscribe_funds!(broker::SimulatedBroker, amount::Real)
     @assert amount >= 0 "Can not credit negative amount: $amount"
     return broker.cash_balances[broker.base_currency] += amount
 end
 
-function subscribe_funds!(broker, amount::Real, currency::String)
+function subscribe_funds!(broker::SimulatedBroker, amount::Real, currency::String)
     @assert amount >= 0 "Can not credit negative amount: $amount"
     return broker.cash_balances[currency] += amount
 end
 
-function withdraw_funds!(broker, amount::Real)
+function withdraw_funds!(broker::SimulatedBroker, amount::Real)
     @assert amount >= 0 "Can not debit negative amount: $amount"
     error_msg = "Can not withdraw $amount, because it is more than the cash balance of $(broker.cash_balances[broker.base_currency])"
     @assert amount <= broker.cash_balances[broker.base_currency] error_msg
@@ -82,7 +88,7 @@ function withdraw_funds!(broker, amount::Real)
     return broker.cash_balances[broker.base_currency] -= amount
 end
 
-function withdraw_funds!(broker, amount::Real, currency::String)
+function withdraw_funds!(broker::SimulatedBroker, amount::Real, currency::String)
     @assert amount >= 0 "Can not debit negative amount: $amount"
     @assert currency in keys(broker.cash_balances) "Unknown currency $currency"
     error_msg = "Can not withdraw $amount, because it is more than the cash balance of $(broker.cash_balances[currency])"
@@ -91,7 +97,7 @@ function withdraw_funds!(broker, amount::Real, currency::String)
     return broker.cash_balances[currency] -= amount
 end
 
-function get_total_market_value(broker)
+function get_total_market_value(broker::SimulatedBroker)
     tmv = 0.0
     for (portfolio_id, portfolio) in broker.portfolios
         tmv += total_market_value(portfolio)
@@ -99,7 +105,7 @@ function get_total_market_value(broker)
     return tmv
 end
 
-function get_account_total_equity(broker)
+function get_account_total_equity(broker::SimulatedBroker)
     te = 0.0
     for (portfolio_id, portfolio) in broker.portfolios
         te += total_equity(portfolio)
@@ -108,7 +114,10 @@ function get_account_total_equity(broker)
 end
 
 function create_portfolio!(
-    broker, initial_cash::Real; name::String="", portfolio_id::String=string(UUIDs.uuid1())
+    broker::SimulatedBroker,
+    initial_cash::Real;
+    name::String="",
+    portfolio_id::String=string(UUIDs.uuid1()),
 )
     error_msg = "Not enough cash in the broker $(broker.cash_balances[broker.base_currency])"
     @assert initial_cash <= broker.cash_balances[broker.base_currency] error_msg
@@ -128,7 +137,7 @@ function create_portfolio!(
 end
 
 function create_portfolio!(
-    broker; name::String="", portfolio_id::String=string(UUIDs.uuid1())
+    broker::SimulatedBroker; name::String="", portfolio_id::String=string(UUIDs.uuid1())
 )
     p = Portfolio(
         broker.current_dt,
@@ -144,7 +153,9 @@ function create_portfolio!(
     return p
 end
 
-function subscribe_funds_to_portfolio!(broker, portfolio_id::String, amount::Real)
+function subscribe_funds_to_portfolio!(
+    broker::SimulatedBroker, portfolio_id::String, amount::Real
+)
     @assert amount >= 0.0 "Unable to add negative amount $amount to a portfolio"
     @assert any(portfolio_id .== keys(broker.portfolios)) "The porfolio ID $portfolio_id does not exist"
     @assert amount <= broker.cash_balances[broker.base_currency] "Not enough funds in broker ($(broker.cash_balances[broker.base_currency])) to fund portfolio $amount"
@@ -154,7 +165,9 @@ function subscribe_funds_to_portfolio!(broker, portfolio_id::String, amount::Rea
     return nothing
 end
 
-function withdraw_funds_from_portfolio!(broker, portfolio_id::String, amount::Real)
+function withdraw_funds_from_portfolio!(
+    broker::SimulatedBroker, portfolio_id::String, amount::Real
+)
     @assert amount >= 0.0 "Unable to withdraw negative amount $amount to a portfolio"
     @assert any(portfolio_id .== keys(broker.portfolios)) "The porfolio ID $portfolio_id does not exist"
     @assert amount <= broker.portfolios[portfolio_id].cash "Not enough funds in portfollio ($(broker.portfolios[portfolio_id].cash)) to withdraw $amount"
@@ -167,7 +180,7 @@ end
 """
 Execute order, and create transaction
 """
-function _execute_order(broker, dt::DateTime, portfolio_id::String, order)
+function _execute_order(broker::SimulatedBroker, dt::DateTime, portfolio_id::String, order)
     bid_ask = get_asset_latest_bid_ask_price(broker.data_handler, dt, order.asset.symbol)
     volume = get_asset_latest_volume(broker.data_handler, dt, order.asset.symbol)
 
@@ -221,7 +234,7 @@ end
 """
 Add an order to the broker order queue
 """
-function submit_order!(broker, portfolio_id::String, order)
+function submit_order!(broker::SimulatedBroker, portfolio_id::String, order)
     @assert any(portfolio_id .== keys(broker.portfolios)) "The porfolio ID $portfolio_id does not exist"
     return enqueue!(broker.open_orders[portfolio_id], order)
 end
@@ -237,14 +250,14 @@ Updates portfolio asset values.
 
 Attempts to execute open orders.
 """
-function update!(broker, dt::DateTime)
+function update!(broker::SimulatedBroker, dt::DateTime)
     broker.current_dt = dt
     update_prices!(broker, dt)
     execute_orders!(broker, dt)
     return nothing
 end
 
-function update_prices!(broker, dt::DateTime)
+function update_prices!(broker::SimulatedBroker, dt::DateTime)
     for portfolio_id in keys(broker.portfolios)
         assets = keys(broker.portfolios[portfolio_id].pos_handler.positions)
         for asset in assets
@@ -260,7 +273,7 @@ function update_prices!(broker, dt::DateTime)
     return nothing
 end
 
-function execute_orders!(broker, dt::DateTime)
+function execute_orders!(broker::SimulatedBroker, dt::DateTime)
     if is_open(broker.exchange, dt)
         for portfolio_id in keys(broker.open_orders)
             while length(broker.open_orders[portfolio_id]) > 0
@@ -276,7 +289,7 @@ end
 """
 ```julia
 function create_portfolio!(
-    broker,
+    broker::SimulatedBroker,
     initial_cash::Real;
     name::String = "",
     portfolio_id::String = string(UUIDs.uuid1()),
@@ -285,7 +298,7 @@ function create_portfolio!(
 
 ```julia
 function create_portfolio!(
-    broker;
+    broker::SimulatedBroker;
     name::String = "",
     portfolio_id::String = string(UUIDs.uuid1()),
 )
@@ -296,7 +309,7 @@ to fund the initial capital.
 
 Parameters
 ----------
-- `broker`
+- `broker::SimulatedBroker`
 - `initial_cash::Real`
 - `name::String = ""`
 - `portfolio_id::String = string(UUIDs.uuid1())`
@@ -305,18 +318,18 @@ create_portfolio!
 
 """
 ```julia
-subscribe_funds!(broker, amount::Real)
+subscribe_funds!(broker::SimulatedBroker, amount::Real)
 ```
 
 ```julia
-subscribe_funds!(broker, amount::Real, currency::String)
+subscribe_funds!(broker::SimulatedBroker, amount::Real, currency::String)
 ```
 
 Add funds to broker
 
 Parameters
 ----------
-- `broker`
+- `broker::SimulatedBroker`
 - `amount::Real`
 - `currency::String`
 """

@@ -2,7 +2,13 @@
 """
 abstract type for slippage models
 """
-abstract type SlippageModel end
+abstract type AbstractSlippageModel end
+
+function (slippage_model::AbstractSlippageModel)(
+    direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
+)
+    return error("No slippage calculation implemented for $(typeof(slippage_model))")
+end
 
 #TODO: Investigate integration of more advanced bid/ask spread methods
 # https://github.com/eguidotti/bidask
@@ -14,7 +20,7 @@ Returns
 -------
 - `Float64`: The original price
 """
-struct ZeroSlippageModel <: SlippageModel end
+struct ZeroSlippageModel <: AbstractSlippageModel end
 
 function (slippage_model::ZeroSlippageModel)(
     direction::Int; price::Float64=0.0, volume::Float64=0.0, order_quantity::Real=0.0
@@ -36,7 +42,7 @@ Returns
 -------
 - `Float64`: The price including slippage
 """
-struct FixedSlippageModel <: SlippageModel
+struct FixedSlippageModel <: AbstractSlippageModel
     spread::Float64
 end
 
@@ -60,7 +66,7 @@ Returns
 -------
 - `Float64`: The price including slippage
 """
-struct PercentSlippageModel <: SlippageModel
+struct PercentSlippageModel <: AbstractSlippageModel
     slippage_pct::Float64
 end
 
@@ -84,7 +90,7 @@ Returns
 -------
 - `Float64`: The price including slippage
 """
-struct VolumeSharesSlippageModel <: SlippageModel
+struct VolumeSharesSlippageModel <: AbstractSlippageModel
     price_impact::Float64
 end
 

@@ -6,8 +6,8 @@ Fields
 ------
 - `data_sources
 """
-struct BacktestDataHandler <: DataHandler
-    data_sources::Any
+struct BacktestDataHandler <: AbstractDataHandler
+    data_sources
     function BacktestDataHandler(data_sources)
         _verify_unique_assets(data_sources)
         return new(data_sources)
@@ -43,7 +43,7 @@ function _verify_unique_assets(data_sources)
     return nothing
 end
 
-function get_asset_latest_bid_price(dh::DataHandler, dt::DateTime, asset::Symbol)
+function get_asset_latest_bid_price(dh::AbstractDataHandler, dt::DateTime, asset::Symbol)
     bid = float(NaN)
     for ds in dh.data_sources
         try
@@ -58,7 +58,7 @@ function get_asset_latest_bid_price(dh::DataHandler, dt::DateTime, asset::Symbol
     return bid
 end
 
-function get_asset_latest_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol)
+function get_asset_latest_ask_price(dh::AbstractDataHandler, dt::DateTime, asset::Symbol)
     ask = float(NaN)
     for ds in dh.data_sources
         try
@@ -73,7 +73,7 @@ function get_asset_latest_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol
     return ask
 end
 
-function get_asset_latest_volume(dh::DataHandler, dt::DateTime, asset::Symbol)
+function get_asset_latest_volume(dh::AbstractDataHandler, dt::DateTime, asset::Symbol)
     bid = float(NaN)
     for ds in dh.data_sources
         try
@@ -88,19 +88,24 @@ function get_asset_latest_volume(dh::DataHandler, dt::DateTime, asset::Symbol)
     return bid
 end
 
-function get_asset_latest_bid_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol)
+function get_asset_latest_bid_ask_price(
+    dh::AbstractDataHandler, dt::DateTime, asset::Symbol
+)
     bid = get_asset_latest_bid_price(dh, dt, asset)
     ask = get_asset_latest_ask_price(dh, dt, asset)
     return bid, ask
 end
 
-function get_asset_latest_mid_price(dh::DataHandler, dt::DateTime, asset::Symbol)
+function get_asset_latest_mid_price(dh::AbstractDataHandler, dt::DateTime, asset::Symbol)
     bid, ask = get_asset_latest_bid_ask_price(dh, dt, asset)
     return (bid + ask) / 2.0
 end
 
 function get_assets_historical_range_close_price(
-    dh::DataHandler, start_dt::DateTime, end_dt::DateTime, assets::AbstractVector{Symbol}
+    dh::AbstractDataHandler,
+    start_dt::DateTime,
+    end_dt::DateTime,
+    assets::AbstractVector{Symbol},
 )
     df_prices = DataFrame(; timestamp=Vector{DateTime})
     for ds in dh.data_sources
@@ -117,7 +122,9 @@ Get a vector of all unique days where
 pricing data exists
 """
 function _get_unique_pricing_events(
-    dh::DataHandler, start_dt::DateTime=DateTime(1900), end_dt::DateTime=DateTime(2100)
+    dh::AbstractDataHandler,
+    start_dt::DateTime=DateTime(1900),
+    end_dt::DateTime=DateTime(2100),
 )
     df_events = DataFrame(; timestamp=Vector{DateTime}(), event_type=Vector{Symbol}())
     for ds in dh.data_sources
@@ -132,14 +139,14 @@ end
 
 """
 ```julia
-get_asset_latest_bid_price(dh::DataHandler, dt::DateTime, asset::Symbol)
+get_asset_latest_bid_price(dh::AbstractDataHandler, dt::DateTime, asset::Symbol)
 ```
 
 Get the bid price for an asset at a certain time.
 
 Parameters
 ----------
-- `dh::DataHandler`
+- `dh::AbstractDataHandler`
 - `dt::DateTime`
 - `asset::Symbol`
 
@@ -151,14 +158,14 @@ get_asset_latest_bid_price
 
 """
 ```julia
-get_asset_latest_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol)
+get_asset_latest_ask_price(dh::AbstractDataHandler, dt::DateTime, asset::Symbol)
 ```
 
 Get the ask price for an asset at a certain time.
 
 Parameters
 ----------
-- `dh::DataHandler`
+- `dh::AbstractDataHandler`
 - `dt::DateTime`
 - `asset::Symbol`
 
@@ -170,14 +177,14 @@ get_asset_latest_ask_price
 
 """
 ```julia
-get_asset_latest_bid_ask_price(dh::DataHandler, dt::DateTime, asset::Symbol)
+get_asset_latest_bid_ask_price(dh::AbstractDataHandler, dt::DateTime, asset::Symbol)
 ```
 
 Get the bid, ask price for an asset at a certain time.
 
 Parameters
 ----------
-- `dh::DataHandler`
+- `dh::AbstractDataHandler`
 - `dt::DateTime`
 - `asset::Symbol`
 
@@ -189,14 +196,14 @@ get_asset_latest_bid_ask_price
 
 """
 ```julia
-get_asset_latest_mid_price(dh::DataHandler, dt::DateTime, asset::Symbol)
+get_asset_latest_mid_price(dh::AbstractDataHandler, dt::DateTime, asset::Symbol)
 ```
 
 Get the average of bid/ask price for an asset at a certain time.
 
 Parameters
 ----------
-- `dh::DataHandler`
+- `dh::AbstractDataHandler`
 - `dt::DateTime`
 - `asset::Symbol`
 
@@ -209,7 +216,7 @@ get_asset_latest_mid_price
 """
 ```julia
 get_assets_historical_range_close_price(
-    dh::DataHandler,
+    dh::AbstractDataHandler,
     start_dt::DateTime,
     end_dt::DateTime,
     assets::AbstractVector{Symbol},
@@ -220,7 +227,7 @@ All closing prices for the given assets in the given timerange
 
 Parameters
 ----------
-- `dh::DataHandler`
+- `dh::AbstractDataHandler`
 - `start_dt::DateTime`
 - `end_dt::DateTime`
 - `asset::AbstractVector{Symbol}`

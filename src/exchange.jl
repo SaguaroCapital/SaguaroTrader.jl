@@ -2,7 +2,11 @@
 """
 Abstract type for trading exchange
 """
-abstract type Exchange end
+abstract type AbstractExchange end
+
+function is_open(exchange::AbstractExchange, dt::DateTime)
+    return error("is_open not implemented for exchange type $(typeof(exchange))")
+end
 
 """
 Simulate live trading
@@ -13,7 +17,7 @@ Fields
 - `open_time::Time=Time(14,30)`
 - `close_time::Time=Time(21,00)`
 """
-struct SimulatedExchange <: Exchange
+struct SimulatedExchange <: AbstractExchange
     start_dt::DateTime
     open_time::Time
     close_time::Time
@@ -41,7 +45,7 @@ Fields
 ------
 - `start_dt::DateTime`
 """
-struct AlwaysOpenExchange <: Exchange
+struct AlwaysOpenExchange <: AbstractExchange
     start_dt::DateTime
 end
 
